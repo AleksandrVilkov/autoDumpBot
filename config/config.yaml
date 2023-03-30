@@ -1,0 +1,17 @@
+token: 5990503214:AAGAlWdWPbKQCSvZsRfR9l48tAkuqTcFdws
+
+commands:
+  start: /start
+  rules: /rules
+  registration: /registration
+  subscription: /subscription
+  sale: /sale
+
+internalcommands:
+  enterCarBrand: /carBrand
+  enterCarModel: /carModel
+  enterCarEngine: /carEngine
+
+validatedata:
+  channelID: -1001773791815
+  channelUrl: "https://t.me/dumpChenDev"
