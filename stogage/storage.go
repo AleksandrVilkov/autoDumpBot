@@ -43,20 +43,26 @@ func (s *Storage) GetConcerns() []bot.Concern {
 	return result
 }
 func (s *Storage) GetBrands(concern string) []bot.Brand {
+	//TODO
 	return nil
 }
 func (s *Storage) GetModels(brand string) []bot.Model {
+	//TODO
 	return nil
 }
 func (s *Storage) GetEngines(model string, brand string) []bot.Engine {
+	//TODO
 	return nil
 }
 func (s *Storage) GetBoltPatterns(model string, brand string) []bot.BoltPattern {
+	//TODO
 	return nil
 }
 func (s *Storage) SaveUser() bool {
+	//TODO
 	return false
 }
 func (s *Storage) UpdateUser() bool {
+	//TODO
 	return false
 }
