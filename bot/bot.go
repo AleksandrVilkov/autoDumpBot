@@ -8,7 +8,7 @@ import (
 
 const PARAMS_PATH = "/home/vilkov/GolandProjects/psa_dump_bot/config/config.yaml"
 
-func StartBot() {
+func StartBot(storage *Storage) {
 	paramsFile, err := os.ReadFile(PARAMS_PATH)
 	CheckFatalError(err)
 
@@ -35,7 +35,7 @@ func StartBot() {
 		}
 
 		if update.CallbackQuery != nil {
-			msg = CallbackProcessing(&update, tempRegister)
+			msg = CallbackProcessing(&update, tempRegister, storage)
 		}
 		if update.Message != nil {
 			msg = MsgProcessing(&update, conf, tempRegister)
