@@ -1,0 +1,32 @@
+CREATE USER autodump_user WITH password 'root';
+ALTER USER autodump_user SUPERUSER;
+CREATE DATABASE autodump OWNER autodump_user;
+CREATE TABLE CAR
+(
+
+);
+
+CREATE TABLE USER
+(
+
+);
+
+CREATE TABLE USERCAR
+(
+
+);
+
+CREATE TABLE ANNOUNCEMENT
+(
+
+);
+
+
+CREATE TABLE SEARCHTERMS
+(
+
+);
+CREATE TABLE SETTING
+(
+
+);
