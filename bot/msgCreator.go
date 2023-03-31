@@ -1,22 +1,22 @@
 package bot
 
-func CreateWelcomeMsg() string {
-	return GetResources().Msgs.WelcomeMessage
+func CreateWelcomeMsg(e *Environment) string {
+	return e.Resources.Msgs.WelcomeMessage
 }
-func CreateErrAuthMsg(chUrl string) string {
-	return GetResources().Errors.AuthError + " \nПодпишись: \n" + chUrl
-}
-
-func CreateChoiceConcernMsg() string {
-	return GetResources().Msgs.ChoiceConcern
-}
-func CreateChoiceAutoBrandMsg() string {
-	return GetResources().Msgs.SuccessCarBrandEnter
+func CreateErrAuthMsg(e *Environment) string {
+	return e.Resources.Errors.AuthError + " \nПодпишись: \n" + e.Config.ValidateData.ChannelUrl
 }
 
-func CreateModelMsg() string {
-	return GetResources().Msgs.SuccessCarModelEnter
+func CreateChoiceConcernMsg(e *Environment) string {
+	return e.Resources.Msgs.ChoiceConcern
 }
-func CreateEngineMsg() string {
-	return GetResources().Msgs.SuccessCarEngineEnter
+func CreateChoiceAutoBrandMsg(e *Environment) string {
+	return e.Resources.Msgs.SuccessCarBrandEnter
+}
+
+func CreateModelMsg(e *Environment) string {
+	return e.Resources.Msgs.SuccessCarModelEnter
+}
+func CreateEngineMsg(e *Environment) string {
+	return e.Resources.Msgs.SuccessCarEngineEnter
 }

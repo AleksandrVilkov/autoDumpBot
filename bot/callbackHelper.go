@@ -5,39 +5,38 @@ import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 )
 
-func CreateMainButtons() tgbotapi.InlineKeyboardMarkup {
-	res := GetResources()
+func CreateMainButtons(e *Environment) tgbotapi.InlineKeyboardMarkup {
 	data := make(map[string]string)
 
 	registration, _ := json.Marshal(CallBack{
 		Type: START_REGISTER,
 		Data: "",
 	})
-	data[res.Buttonstext.Registration] = string(registration)
+	data[e.Resources.Buttonstext.Registration] = string(registration)
 
 	subscribe, _ := json.Marshal(CallBack{
 		Type: SUBSCRIBE,
 		Data: "",
 	})
-	data[res.Buttonstext.Subscribe] = string(subscribe)
+	data[e.Resources.Buttonstext.Subscribe] = string(subscribe)
 
 	searchRequest, _ := json.Marshal(CallBack{
 		Type: SEARCH_REQUEST,
 		Data: "",
 	})
-	data[res.Buttonstext.SearchRequest] = string(searchRequest)
+	data[e.Resources.Buttonstext.SearchRequest] = string(searchRequest)
 
 	placeAnAd, _ := json.Marshal(CallBack{
 		Type: PLACE_AN_AD,
 		Data: "",
 	})
-	data[res.Buttonstext.PlaceAnAd] = string(placeAnAd)
+	data[e.Resources.Buttonstext.PlaceAnAd] = string(placeAnAd)
 
 	rules, _ := json.Marshal(CallBack{
 		Type: RULES,
 		Data: "",
 	})
-	data[res.Buttonstext.Rules] = string(rules)
+	data[e.Resources.Buttonstext.Rules] = string(rules)
 	return CreateInlineKeyBoard(data, 1)
 }
 

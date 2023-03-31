@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func MsgProcessing(update *tgbotapi.Update, conf Config, temp map[string]TempUserData) tgbotapi.MessageConfig {
+func MsgProcessing(update *tgbotapi.Update, e *Environment, temp map[string]TempUserData) tgbotapi.MessageConfig {
 
 	var msg tgbotapi.MessageConfig
 	var tempData TempUserData
@@ -15,12 +15,12 @@ func MsgProcessing(update *tgbotapi.Update, conf Config, temp map[string]TempUse
 
 		tempData.User.Id = strconv.FormatInt(update.Message.Chat.ID, 10)
 		switch update.Message.Text {
-		case conf.Commands.Start:
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, CreateWelcomeMsg())
-			msg.ReplyMarkup = CreateMainButtons()
-			tempData.Action.LastCommand = conf.Commands.Start
+		case e.Config.Commands.Start:
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, CreateWelcomeMsg(e))
+			msg.ReplyMarkup = CreateMainButtons(e)
+			tempData.Action.LastCommand = e.Config.Commands.Start
 		default:
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, GetResources().Errors.CommonError)
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, e.Resources.Errors.CommonError)
 		}
 	} else {
 		msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Use the words for search.")

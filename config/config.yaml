@@ -1,5 +1,4 @@
-token: 5990503214:AAGAlWdWPbKQCSvZsRfR9l48tAkuqTcFdws
-
+token:
 commands:
   start: /start
   rules: /rules
@@ -15,3 +14,11 @@ internalcommands:
 validatedata:
   channelID: -1001773791815
   channelUrl: "https://t.me/dumpChenDev"
+
+psql:
+  login: autodump_user
+  password: root
+  ssl_mode: disable
+  driver_name: postgres
+  database_name: autodump
+  attempts_connection: 3

@@ -2,23 +2,13 @@ package bot
 
 import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
-	"gopkg.in/yaml.v3"
-	"os"
 )
 
-const PARAMS_PATH = "/home/vilkov/GolandProjects/psa_dump_bot/config/config.yaml"
-
-func StartBot(storage *Storage) {
-	paramsFile, err := os.ReadFile(PARAMS_PATH)
-	CheckFatalError(err)
+func StartBot(e *Environment) {
 
 	tempRegister := make(map[string]TempUserData)
 
-	var conf Config
-	err = yaml.Unmarshal(paramsFile, &conf)
-	CheckFatalError(err)
-
-	bot, err := tgbotapi.NewBotAPI(conf.Token)
+	bot, err := tgbotapi.NewBotAPI(e.Config.Token)
 	CheckFatalError(err)
 
 	u := tgbotapi.NewUpdate(0)
@@ -27,18 +17,18 @@ func StartBot(storage *Storage) {
 
 	for update := range updates {
 		var msg tgbotapi.MessageConfig
-		if validateUser(bot, &update, &conf) != nil {
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, CreateErrAuthMsg(conf.ValidateData.ChannelUrl))
+		if validateUser(bot, &update, e.Config) != nil {
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, CreateErrAuthMsg(e))
 			_, err := bot.Send(msg)
 			CheckFatalError(err)
 			return
 		}
 
 		if update.CallbackQuery != nil {
-			msg = CallbackProcessing(&update, tempRegister, storage)
+			msg = CallbackProcessing(&update, tempRegister, e)
 		}
 		if update.Message != nil {
-			msg = MsgProcessing(&update, conf, tempRegister)
+			msg = MsgProcessing(&update, e, tempRegister)
 		}
 
 		_, err := bot.Send(msg)

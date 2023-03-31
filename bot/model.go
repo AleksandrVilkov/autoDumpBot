@@ -1,5 +1,7 @@
 package bot
 
+import "time"
+
 type ChatMemberStatus string
 
 const (
@@ -8,6 +10,14 @@ const (
 	KICKED                   = "kicked"        // пользователь заблокирован;
 	ADMIN                    = "administrator" //админ
 	CREATOR                  = "creator"       //создатель
+)
+
+type Role string
+
+const (
+	ADMIN_ROLE  Role = "ADMIN"  //пользователь является админ;
+	KICKED_ROLE      = "KICKED" // пользователь заблокирован;
+	USER_ROLE        = "USER"   //пользователь
 )
 
 type CallbackType string
@@ -67,6 +77,19 @@ type Config struct {
 		ChannelID  int64  `yaml:"channelID"`
 		ChannelUrl string `yaml:"channelUrl"`
 	}
+	Psql struct {
+		Login              string `yaml:"login"`
+		Password           string `yaml:"password"`
+		SslMode            string `yaml:"ssl_mode"`
+		DriverName         string `yaml:"driver_name"`
+		DatabaseName       string `yaml:"database_name"`
+		AttemptsConnection string `yaml:"attempts_connection"`
+	}
+}
+type Environment struct {
+	Config    *Config
+	Storage   Storage
+	Resources *Resources
 }
 
 func (c *Config) printCommands() string {
@@ -99,6 +122,25 @@ type TempUserData struct {
 	}
 }
 
+type User struct {
+	Id         int
+	CreateDate time.Time
+	Role       Role
+	Login      string
+	Region     string
+	UserCar    UserCar
+}
+
+type UserCar struct {
+	Id          int
+	CreateDate  time.Time
+	Concern     Concern
+	Model       Model
+	Engine      Engine
+	BoltPattern BoltPattern
+	Brand       Brand
+}
+
 type CallBack struct {
 	Type CallbackType `json:"type"`
 	Data string       `json:"data"`
@@ -107,9 +149,11 @@ type CallBack struct {
 type Concern struct {
 	Concern string `json:"concern"`
 }
+
 type Brand struct {
 	Brand string `json:"brand"`
 }
+
 type Model struct {
 	Model string `json:"model"`
 }
@@ -117,5 +161,6 @@ type Model struct {
 type Engine struct {
 	EngineName string `json:"engineName"`
 }
+
 type BoltPattern struct {
 }
