@@ -36,6 +36,7 @@ func (s *Storage) GetConcerns() []bot.Concern {
 
 		if err != nil {
 			log.Println("Error scan concern in func GetConcerns()")
+			return result
 		}
 
 		result = append(result, bot.Concern{Concern: concern})
