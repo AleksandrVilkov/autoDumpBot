@@ -8,47 +8,40 @@ import (
 
 const PARAMS_PATH = "/home/vilkov/GolandProjects/psa_dump_bot/config/config.yaml"
 
-type tempUserData struct {
-	User struct {
-		Id string
-	}
-	Action struct {
-		MainAction  string
-		LastCommand string
-	}
-	CarData struct {
-		CarBrand    string
-		CarModel    string
-		CarEngine   string
-		BoltPattern string
-	}
-	SaleData struct {
-	}
-	SubscriptionData struct {
-	}
-}
-
 func StartBot() {
 	paramsFile, err := os.ReadFile(PARAMS_PATH)
-	checkError(err)
+	CheckFatalError(err)
 
-	tempRegister := make(map[string]tempUserData)
+	tempRegister := make(map[string]TempUserData)
 
-	var conf config
+	var conf Config
 	err = yaml.Unmarshal(paramsFile, &conf)
-	checkFatalError(err)
+	CheckFatalError(err)
 
 	bot, err := tgbotapi.NewBotAPI(conf.Token)
-	checkFatalError(err)
+	CheckFatalError(err)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 	updates, err := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-		if update.Message == nil {
-			continue
+		var msg tgbotapi.MessageConfig
+		if validateUser(bot, &update, &conf) != nil {
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, CreateErrAuthMsg(conf.ValidateData.ChannelUrl))
+			_, err := bot.Send(msg)
+			CheckFatalError(err)
+			return
 		}
-		processing(&update, bot, conf, tempRegister)
+
+		if update.CallbackQuery != nil {
+			msg = CallbackProcessing(&update, tempRegister)
+		}
+		if update.Message != nil {
+			msg = MsgProcessing(&update, conf, tempRegister)
+		}
+
+		_, err := bot.Send(msg)
+		CheckError(err)
 	}
 }

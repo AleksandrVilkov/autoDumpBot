@@ -1,6 +1,6 @@
 package bot
 
-type config struct {
+type Config struct {
 	Token    string `yaml:"token"`
 	Commands struct {
 		Start        string `yaml:"start"`
@@ -21,7 +21,7 @@ type config struct {
 	}
 }
 
-func (c *config) printCommands() string {
+func (c *Config) printCommands() string {
 	return "\n" + c.Commands.Start + "\n" +
 		"\n" + c.Commands.Rules +
 		"\n" + c.Commands.Registration +
