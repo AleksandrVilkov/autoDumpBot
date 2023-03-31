@@ -27,6 +27,7 @@ func main() {
 		Storage:   postgreSQL.NewStorage(),
 		Resources: getResources(),
 	}
+
 	e.TempData = make(map[string]bot.TempUserData)
 	bot.StartBot(&e)
 }
