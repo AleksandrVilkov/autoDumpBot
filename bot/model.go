@@ -90,6 +90,7 @@ type Environment struct {
 	Config    *Config
 	Storage   Storage
 	Resources *Resources
+	TempData  map[string]TempUserData
 }
 
 func (c *Config) printCommands() string {

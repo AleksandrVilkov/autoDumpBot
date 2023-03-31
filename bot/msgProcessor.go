@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func MsgProcessing(update *tgbotapi.Update, e *Environment, temp map[string]TempUserData) tgbotapi.MessageConfig {
+func MsgProcessing(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
 
 	var msg tgbotapi.MessageConfig
 	var tempData TempUserData
@@ -27,6 +27,6 @@ func MsgProcessing(update *tgbotapi.Update, e *Environment, temp map[string]Temp
 
 	}
 
-	temp[strconv.FormatInt(update.Message.Chat.ID, 10)] = tempData
+	e.TempData[strconv.FormatInt(update.Message.Chat.ID, 10)] = tempData
 	return msg
 }

@@ -6,8 +6,6 @@ import (
 
 func StartBot(e *Environment) {
 
-	tempRegister := make(map[string]TempUserData)
-
 	bot, err := tgbotapi.NewBotAPI(e.Config.Token)
 	CheckFatalError(err)
 
@@ -25,10 +23,10 @@ func StartBot(e *Environment) {
 		}
 
 		if update.CallbackQuery != nil {
-			msg = CallbackProcessing(&update, tempRegister, e)
+			msg = CallbackProcessing(&update, e)
 		}
 		if update.Message != nil {
-			msg = MsgProcessing(&update, e, tempRegister)
+			msg = MsgProcessing(&update, e)
 		}
 
 		_, err := bot.Send(msg)

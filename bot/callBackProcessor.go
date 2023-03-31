@@ -5,7 +5,7 @@ import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 )
 
-func CallbackProcessing(update *tgbotapi.Update, temp map[string]TempUserData, e *Environment) tgbotapi.MessageConfig {
+func CallbackProcessing(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
 	var msg tgbotapi.MessageConfig
 	callback, err := getCallBack(update.CallbackQuery.Data)
 
