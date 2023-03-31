@@ -22,10 +22,9 @@ func main() {
 	var conf bot.Config
 	err = yaml.Unmarshal(paramsFile, &conf)
 
-	s := postgreSQL.NewStorage()
 	e := bot.Environment{
 		Config:    &conf,
-		Storage:   s,
+		Storage:   postgreSQL.NewStorage(),
 		Resources: getResources(),
 	}
 
