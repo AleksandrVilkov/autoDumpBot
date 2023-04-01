@@ -3,7 +3,6 @@ package postgreSQL
 import (
 	"log"
 	"psa_dump_bot/bot"
-	"strconv"
 )
 
 const (
@@ -128,24 +127,37 @@ func (s *Storage) GetBoltPatterns(model string, brand string) []bot.BoltPattern 
 }
 func (s *Storage) SaveUser(u *bot.User) bool {
 	//инсерт в юзера, получаем его id инсерт в юзер кар,
-	userQueryIncerst := INSERT_INTO + USER_TABLE_NAME +
-		"(" + "createddate" + ", " +
-		"role" + ", " +
-		"login" + ", " +
-		"lastname" + " ," +
-		"regionid" + " ," +
-		"carid" + ") " + VALUES + "(" +
-		" '" + u.CreateDate.Format(TEAMPLEATE_TIME) + "', " +
-		" '" + string(u.Role) + "', " +
-		" '" + u.Login + "', " +
-		" '" + strconv.Itoa(u.Id) + "', " +
-		" '" + strconv.Itoa(u.Region.Id) +
-		" '" + strconv.Itoa(u.UserCar.Id) + "')"
+	//userQueryIncerst := INSERT_INTO + USER_TABLE_NAME +
+	//	"(" + "createddate" + ", " +
+	//	"role" + ", " +
+	//	"login" + ", " +
+	//	"lastname" + " ," +
+	//	"regionid" + " ," +
+	//	"carid" + ") " + VALUES + "(" +
+	//	" '" + u.CreateDate.Format(TEAMPLEATE_TIME) + "', " +
+	//	" '" + string(u.Role) + "', " +
+	//	" '" + u.Login + "', " +
+	//	" '" + strconv.Itoa(u.Id) + "', " +
+	//	" '" + strconv.Itoa(u.Region.Id) +
+	//	" '" + strconv.Itoa(u.UserCar.Id) + "')"
 
-	result, err := s.psql.SendQuery(userQueryIncerst)
+	//result, err := s.psql.SendQuery(userQueryIncerst)
 	//TODO
 
 	return false
+}
+
+func (s *Storage) findCarId(concern bot.Concern, brand bot.Brand, model bot.Model, engine bot.Engine) int {
+	query := SELECT + "*" + FROM + CAR_TABLE_NAME + WHERE + "concern ='" + concern.Concern + "' " + AND + "brand ='" + brand.Brand + "' " + AND +
+		"engine ='" + engine.EngineName + "';"
+	resultSearch := s.psql.GetRows(query)
+	var carid int
+	err := resultSearch.Scan(&carid)
+	if err != nil {
+		log.Println("Error find car ID in dataBase")
+		return carid
+	}
+	return carid
 }
 func (s *Storage) UpdateUser() bool {
 	//TODO
