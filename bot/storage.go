@@ -6,6 +6,6 @@ type Storage interface {
 	GetModels(brand string) []Model
 	GetEngines(model string, brand string) []Engine
 	GetBoltPatterns(model string, brand string) []BoltPattern
-	SaveUser() bool
+	SaveUser(user *User) bool
 	UpdateUser() bool
 }

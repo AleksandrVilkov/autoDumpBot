@@ -128,7 +128,7 @@ type User struct {
 	CreateDate time.Time
 	Role       Role
 	Login      string
-	Region     string
+	Region     Region
 	UserCar    UserCar
 }
 
@@ -164,4 +164,10 @@ type Engine struct {
 }
 
 type BoltPattern struct {
+	BoltPatternSize string `json:"engineName"`
+}
+
+type Region struct {
+	Id   int
+	Name string
 }
