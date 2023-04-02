@@ -3,6 +3,7 @@ package bot
 import (
 	"encoding/json"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	"time"
 )
 
 func CreateMainButtons(e *Environment) tgbotapi.InlineKeyboardMarkup {
@@ -61,13 +62,13 @@ func CreateAutoBrandButton(brands []Brand) tgbotapi.InlineKeyboardMarkup {
 	data := make(map[string]string)
 	for i := 0; i < len(brands); i++ {
 
-		b, _ := json.Marshal(Brand{Brand: brands[i].Brand})
-		concernData, _ := json.Marshal(CallBack{
+		bJson, _ := json.Marshal(Brand{Brand: brands[i].Brand})
+		brandData, _ := json.Marshal(CallBack{
 			Type: CHOOSE_BRAND,
-			Data: string(b),
+			Data: string(bJson),
 		})
 
-		data[brands[i].Brand] = string(concernData)
+		data[brands[i].Brand] = string(brandData)
 	}
 
 	return CreateInlineKeyBoard(data, 1)
@@ -78,14 +79,71 @@ func CreateModelsButton(models []Model) tgbotapi.InlineKeyboardMarkup {
 	data := make(map[string]string)
 	for i := 0; i < len(models); i++ {
 
-		b, _ := json.Marshal(Model{Model: models[i].Model})
-		concernData, _ := json.Marshal(CallBack{
+		mJson, _ := json.Marshal(Model{Model: models[i].Model})
+		modelData, _ := json.Marshal(CallBack{
 			Type: CHOOSE_MODEL,
-			Data: string(b),
+			Data: string(mJson),
 		})
 
-		data[models[i].Model] = string(concernData)
+		data[models[i].Model] = string(modelData)
 	}
 
 	return CreateInlineKeyBoard(data, 1)
+}
+
+func CreateEnginesButton(e []Engine) tgbotapi.InlineKeyboardMarkup {
+
+	data := make(map[string]string)
+	for i := 0; i < len(e); i++ {
+		eJson, _ := json.Marshal(Engine{EngineName: e[i].EngineName})
+		engineData, _ := json.Marshal(CallBack{
+			Type: CHOOSE_ENGINE,
+			Data: string(eJson),
+		})
+		data[e[i].EngineName] = string(engineData)
+	}
+
+	return CreateInlineKeyBoard(data, 1)
+}
+func CreateBoltPatternsButton(bp []BoltPattern) tgbotapi.InlineKeyboardMarkup {
+	data := make(map[string]string)
+	for i := 0; i < len(bp); i++ {
+		bpJson, _ := json.Marshal(BoltPattern{BoltPatternSize: bp[i].BoltPatternSize})
+		bpData, _ := json.Marshal(CallBack{
+			Type: CHOOSE_BOLT_PATTERN,
+			Data: string(bpJson),
+		})
+		data[bp[i].BoltPatternSize] = string(bpData)
+	}
+
+	return CreateInlineKeyBoard(data, 1)
+}
+func CreateRegionsButton(r []Region) tgbotapi.InlineKeyboardMarkup {
+	data := make(map[string]string)
+	for i := 0; i < len(r); i++ {
+		rJson, _ := json.Marshal(Region{RegionName: r[i].RegionName})
+		bpData, _ := json.Marshal(CallBack{
+			Type: CHOOSE_CITY,
+			Data: string(rJson),
+		})
+		data[r[i].RegionName] = string(bpData)
+	}
+
+	return CreateInlineKeyBoard(data, 1)
+}
+func CreateUserFromTemp(td TempData) *User {
+	return &User{
+		CreateDate: time.Time{},
+		Role:       USER_ROLE,
+		Login:      td.UserId,
+		Region:     Region{},
+		UserCar: UserCar{
+			CreateDate:  time.Time{},
+			Concern:     td.CarData.Concern,
+			Model:       td.CarData.CarModel,
+			Engine:      td.CarData.CarEngine,
+			BoltPattern: td.CarData.BoltPattern,
+			Brand:       td.CarData.CarBrand,
+		},
+	}
 }

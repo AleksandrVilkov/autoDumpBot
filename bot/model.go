@@ -23,14 +23,17 @@ const (
 type CallbackType string
 
 const (
-	START_REGISTER CallbackType = "startRegistration"
-	CHOOSE_CONCERN              = "chooseConcern"
-	CHOOSE_BRAND                = "chooseBrand"
-	CHOOSE_MODEL                = "chooseModel"
-	SUBSCRIBE                   = "subscribe"
-	SEARCH_REQUEST              = "searchRequest"
-	PLACE_AN_AD                 = "placeAnAd"
-	RULES                       = "rules"
+	START_REGISTER      CallbackType = "startRegistration"
+	CHOOSE_CONCERN                   = "chooseConcern"
+	CHOOSE_BRAND                     = "chooseBrand"
+	CHOOSE_MODEL                     = "chooseModel"
+	CHOOSE_ENGINE                    = "chooseEngine"
+	CHOOSE_BOLT_PATTERN              = "chooseBP"
+	CHOOSE_CITY                      = "chooseCity"
+	SUBSCRIBE                        = "subscribe"
+	SEARCH_REQUEST                   = "searchRequest"
+	PLACE_AN_AD                      = "placeAnAd"
+	RULES                            = "rules"
 )
 
 type Resources struct {
@@ -43,13 +46,15 @@ type Resources struct {
 	}
 
 	Msgs struct {
-		WelcomeMessage        string `yaml:"welcomeMessage"`
-		Rules                 string `yaml:"rules"`
-		ChoiceConcern         string `yaml:"choiceConcern"`
-		SuccessCarBrandEnter  string `yaml:"successCarBrandEnter"`
-		SuccessCarModelEnter  string `yaml:"successCarModelEnter"`
-		SuccessCarEngineEnter string `yaml:"successCarEngineEnter"`
-		SuccessReservation    string `yaml:"successReservation"`
+		WelcomeMessage      string `yaml:"welcomeMessage"`
+		Rules               string `yaml:"rules"`
+		ChoiceConcern       string `yaml:"choiceConcern"`
+		CarBrandEnter       string `yaml:"сarBrandEnter"`
+		CarModelEnter       string `yaml:"сarModelEnter"`
+		CarEngineEnter      string `yaml:"сarEngineEnter"`
+		CarBoltPatternEnter string `yaml:"carBoltPatternEnter"`
+		RegionEnter         string `yaml:"regionEnter"`
+		SuccessReservation  string `yaml:"successReservation"`
 	}
 	Errors struct {
 		ErrorReservation string `yaml:"errorReservation"`
@@ -90,7 +95,7 @@ type Environment struct {
 	Config    *Config
 	Storage   Storage
 	Resources *Resources
-	TempData  map[string]TempUserData
+	TempData  map[string]TempData
 }
 
 func (c *Config) printCommands() string {
@@ -102,26 +107,25 @@ func (c *Config) printCommands() string {
 
 }
 
-type TempUserData struct {
-	User struct {
-		Id string
-	}
-	Action struct {
-		MainAction  string
-		LastCommand string
-	}
-	CarData struct {
-		Concern     Concern
-		CarBrand    Brand
-		CarModel    Model
-		CarEngine   Engine
-		BoltPattern string
-	}
-	SaleData struct {
-	}
-	SubscriptionData struct {
-	}
+type TempData struct {
+	UserId           string
+	CarData          TempCarData
+	SaleData         TempSaleData
+	SubscriptionData TempSubscriptionData
 }
+
+type TempCarData struct {
+	Concern     Concern
+	CarBrand    Brand
+	CarModel    Model
+	CarEngine   Engine
+	BoltPattern BoltPattern
+}
+
+type TempSaleData struct {
+}
+
+type TempSubscriptionData struct{}
 
 type User struct {
 	Id         int
@@ -164,10 +168,9 @@ type Engine struct {
 }
 
 type BoltPattern struct {
-	BoltPatternSize string `json:"engineName"`
+	BoltPatternSize string `json:"boltPattern"`
 }
 
 type Region struct {
-	Id   int
-	Name string
+	RegionName string `json:"name"`
 }

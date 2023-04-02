@@ -18,9 +18,9 @@ const (
 	ALL         = "* "
 	AND         = "AND "
 
-	CAR_TABLE_NAME      = "CAR "
-	USER_TABLE_NAME     = "CLIENT "
-	CAR_USER_TABLE_NAME = "CLIENTCAR "
+	CAR_TABLE_NAME    = "CAR "
+	USER_TABLE_NAME   = "CLIENT "
+	REGION_TABLE_NAME = "REGION "
 
 	TEAMPLEATE_TIME = "2006-01-02"
 )
@@ -126,7 +126,7 @@ func (s *Storage) GetBoltPatterns(model string, brand string) []bot.BoltPattern 
 	return result
 }
 func (s *Storage) SaveUser(u *bot.User) bool {
-	//инсерт в юзера, получаем его id инсерт в юзер кар,
+
 	//userQueryIncerst := INSERT_INTO + USER_TABLE_NAME +
 	//	"(" + "createddate" + ", " +
 	//	"role" + ", " +
@@ -140,13 +140,31 @@ func (s *Storage) SaveUser(u *bot.User) bool {
 	//	" '" + strconv.Itoa(u.Id) + "', " +
 	//	" '" + strconv.Itoa(u.Region.Id) +
 	//	" '" + strconv.Itoa(u.UserCar.Id) + "')"
-
+	//
 	//result, err := s.psql.SendQuery(userQueryIncerst)
 	//TODO
 
 	return false
 }
 
+func (s *Storage) GetAllRegions() []bot.Region {
+	query := SELECT + "*" + FROM + REGION_TABLE_NAME
+	resultSearch := s.psql.GetRows(query)
+	var result []bot.Region
+	for resultSearch.Next() {
+		var id string
+		var name string
+		err := resultSearch.Scan(&id, &name)
+		if err != nil {
+			log.Println("Error scan regions in func GetAllRegions()")
+			return result
+		}
+		result = append(result, bot.Region{
+			RegionName: name,
+		})
+	}
+	return result
+}
 func (s *Storage) findCarId(concern bot.Concern, brand bot.Brand, model bot.Model, engine bot.Engine) int {
 	query := SELECT + "*" + FROM + CAR_TABLE_NAME + WHERE + "concern ='" + concern.Concern + "' " + AND + "brand ='" + brand.Brand + "' " + AND +
 		"engine ='" + engine.EngineName + "';"

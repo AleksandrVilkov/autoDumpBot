@@ -28,7 +28,7 @@ func main() {
 		Resources: getResources(),
 	}
 
-	e.TempData = make(map[string]bot.TempUserData)
+	e.TempData = make(map[string]bot.TempData)
 	bot.StartBot(&e)
 }
 
