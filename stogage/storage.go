@@ -1,6 +1,7 @@
 package postgreSQL
 
 import (
+	"fmt"
 	"log"
 	"psa_dump_bot/bot"
 )
@@ -126,7 +127,7 @@ func (s *Storage) GetBoltPatterns(model string, brand string) []bot.BoltPattern 
 	return result
 }
 func (s *Storage) SaveUser(u *bot.User) bool {
-
+	a := s.findCarId(u.UserCar.Concern, u.UserCar.Brand, u.UserCar.Model, u.UserCar.Engine)
 	//userQueryIncerst := INSERT_INTO + USER_TABLE_NAME +
 	//	"(" + "createddate" + ", " +
 	//	"role" + ", " +
@@ -138,12 +139,13 @@ func (s *Storage) SaveUser(u *bot.User) bool {
 	//	" '" + string(u.Role) + "', " +
 	//	" '" + u.Login + "', " +
 	//	" '" + strconv.Itoa(u.Id) + "', " +
-	//	" '" + strconv.Itoa(u.Region.Id) +
+	//	" '" + u.Region.RegionName +
 	//	" '" + strconv.Itoa(u.UserCar.Id) + "')"
 	//
 	//result, err := s.psql.SendQuery(userQueryIncerst)
 	//TODO
 
+	fmt.Println(a)
 	return false
 }
 
@@ -166,16 +168,36 @@ func (s *Storage) GetAllRegions() []bot.Region {
 	return result
 }
 func (s *Storage) findCarId(concern bot.Concern, brand bot.Brand, model bot.Model, engine bot.Engine) int {
-	query := SELECT + "*" + FROM + CAR_TABLE_NAME + WHERE + "concern ='" + concern.Concern + "' " + AND + "brand ='" + brand.Brand + "' " + AND +
-		"engine ='" + engine.EngineName + "';"
+	//TODO подумать как сделать лучше
+
+	query := SELECT + "*" + FROM + CAR_TABLE_NAME + WHERE + "model ='" + model.Model + "'" + AND + "concern ='" + concern.Concern + "' " + AND + "brand ='" + brand.Brand + "' " + AND +
+		"engine ='" + engine.EngineName + "'"
 	resultSearch := s.psql.GetRows(query)
-	var carid int
-	err := resultSearch.Scan(&carid)
-	if err != nil {
-		log.Println("Error find car ID in dataBase")
-		return carid
+	var id int
+	iterator := 0
+	for resultSearch.Next() {
+		if iterator == 0 {
+			iterator++
+			var c string
+			var b string
+			var m string
+			var e string
+			var bp string
+			var yearFrom string
+			var yearTo string
+			var class string
+			err := resultSearch.Scan(&id, &c, &b, &m, &e, &bp, &yearFrom, &yearTo, &class)
+			if err != nil {
+				log.Println("Error find car ID in dataBase")
+				return 0
+			}
+		} else {
+			log.Println("More than one result found!")
+			return 0
+		}
 	}
-	return carid
+
+	return id
 }
 func (s *Storage) UpdateUser() bool {
 	//TODO

@@ -133,10 +133,10 @@ func CreateRegionsButton(r []Region) tgbotapi.InlineKeyboardMarkup {
 }
 func CreateUserFromTemp(td TempData) *User {
 	return &User{
-		CreateDate: time.Time{},
+		CreateDate: time.Now(),
 		Role:       USER_ROLE,
 		Login:      td.UserId,
-		Region:     Region{},
+		Region:     td.Region,
 		UserCar: UserCar{
 			CreateDate:  time.Time{},
 			Concern:     td.CarData.Concern,

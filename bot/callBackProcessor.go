@@ -19,6 +19,7 @@ func CallbackProcessing(update *tgbotapi.Update, e *Environment) tgbotapi.Messag
 		msg = createStartRegisterResponse(update, e)
 		key := strconv.Itoa(update.CallbackQuery.From.ID)
 		temp := TempData{
+			UserId:  strconv.Itoa(update.CallbackQuery.From.ID),
 			CarData: TempCarData{},
 		}
 		e.TempData[key] = temp
@@ -57,13 +58,16 @@ func CallbackProcessing(update *tgbotapi.Update, e *Environment) tgbotapi.Messag
 		_ = json.Unmarshal([]byte(callback.Data), &bp)
 		userTemp := e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)]
 		userTemp.CarData.BoltPattern = bp
-
+		e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)] = userTemp
 		msg = createBoltPatternResponse(update, e)
 
 	case CHOOSE_CITY:
 		var region Region
 		userTemp := e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)]
 		_ = json.Unmarshal([]byte(callback.Data), &region)
+		userTemp.Region = region
+		e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)] = userTemp
+
 		if e.Storage.SaveUser(CreateUserFromTemp(userTemp)) {
 			msg = createOkSaveUserResponse(update, e)
 		} else {

@@ -112,6 +112,7 @@ type TempData struct {
 	CarData          TempCarData
 	SaleData         TempSaleData
 	SubscriptionData TempSubscriptionData
+	Region           Region
 }
 
 type TempCarData struct {
