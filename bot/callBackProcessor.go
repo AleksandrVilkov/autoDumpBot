@@ -73,6 +73,10 @@ func CallbackProcessing(update *tgbotapi.Update, e *Environment) tgbotapi.Messag
 		} else {
 			msg = createErrSaveUserResponse(update, e)
 		}
+	case PLACE_AN_AD:
+		msg = createPlaceAnAdWelcomeResp(update, e)
+		userTemp := e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)]
+		userTemp.LastCommand = PLACE_AN_AD
 	}
 
 	return msg
@@ -129,6 +133,11 @@ func createOkSaveUserResponse(update *tgbotapi.Update, e *Environment) tgbotapi.
 func createErrSaveUserResponse(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
 	//TODO Если не удалось сохранить
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), "")
+	return msg
+}
+
+func createPlaceAnAdWelcomeResp(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), e.Resources.Msgs.StartSale)
 	return msg
 }
 

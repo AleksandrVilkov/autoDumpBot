@@ -55,6 +55,7 @@ type Resources struct {
 		CarBoltPatternEnter string `yaml:"carBoltPatternEnter"`
 		RegionEnter         string `yaml:"regionEnter"`
 		SuccessReservation  string `yaml:"successReservation"`
+		StartSale           string `yaml:"startSale"`
 	}
 	Errors struct {
 		ErrorReservation string `yaml:"errorReservation"`
@@ -109,6 +110,7 @@ func (c *Config) printCommands() string {
 
 type TempData struct {
 	UserId           string
+	LastCommand      string
 	CarData          TempCarData
 	SaleData         TempSaleData
 	SubscriptionData TempSubscriptionData
@@ -124,6 +126,7 @@ type TempCarData struct {
 }
 
 type TempSaleData struct {
+	announcementText string
 }
 
 type TempSubscriptionData struct{}
