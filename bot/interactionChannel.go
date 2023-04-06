@@ -1,6 +1,8 @@
 package bot
 
-import tgbotapi "github.com/Syfaro/telegram-bot-api"
+import (
+	tgbotapi "github.com/Syfaro/telegram-bot-api"
+)
 
 func getMsgOnlyTextForChannel(e *Environment, test string) tgbotapi.MessageConfig {
 	return tgbotapi.NewMessage(e.Config.ValidateData.ChannelID, test)
@@ -26,25 +28,16 @@ func getMsgWithPhotoForChannelWithCaption(e *Environment, photo []byte, text str
 	return msg
 }
 
-func getMsgWithSomePhotosForChannelWithCaption(e *Environment, photos [][]byte, text string) tgbotapi.MediaGroupConfig {
+func getMsgWithSomePhotosForChannelWithCaption(e *Environment, msgs []tgbotapi.Message) tgbotapi.MediaGroupConfig {
 
-	//TODO not working
-	photoFilesBytes := make([]interface{}, len(photos))
-	for i := 0; i < len(photos); i++ {
-		photoFilesBytes[i] = tgbotapi.PhotoConfig{
-			BaseFile: tgbotapi.BaseFile{
-				BaseChat:    tgbotapi.BaseChat{},
-				File:        photos[i],
-				FileID:      "",
-				UseExisting: false,
-				MimeType:    "",
-				FileSize:    0,
-			},
-			Caption:   "",
-			ParseMode: "",
-		}
+	var listMediaVideoInput []interface{}
+
+	for i := 0; i < len(msgs); i++ {
+		msg := msgs[i]
+		photos := *msg.Photo
+		photo := photos[0]
+		listMediaVideoInput = append(listMediaVideoInput, tgbotapi.NewInputMediaPhoto(photo.FileID))
 	}
 
-	var msg = tgbotapi.NewMediaGroup(e.Config.ValidateData.ChannelID, photoFilesBytes)
-	return msg
+	return tgbotapi.NewMediaGroup(e.Config.ValidateData.ChannelID, listMediaVideoInput)
 }
