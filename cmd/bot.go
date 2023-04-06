@@ -1,13 +1,14 @@
-package bot
+package main
 
 import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	"psa_dump_bot/bot"
 )
 
-func StartBot(e *Environment) {
+func StartBot(e *bot.Environment) {
 
 	bot, err := tgbotapi.NewBotAPI(e.Config.Token)
-	CheckFatalError(err)
+	bot.CheckFatalError(err)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
@@ -15,21 +16,21 @@ func StartBot(e *Environment) {
 
 	for update := range updates {
 		var msg tgbotapi.MessageConfig
-		if validateUser(bot, &update, e.Config) != nil {
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, CreateErrAuthMsg(e))
+		if bot.validateUser(bot, &update, e.Config) != nil {
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, bot.CreateErrAuthMsg(e))
 			_, err := bot.Send(msg)
-			CheckFatalError(err)
+			bot.CheckFatalError(err)
 			return
 		}
 
 		if update.CallbackQuery != nil {
-			msg = CallbackProcessing(&update, e)
+			msg = bot.CallbackProcessing(&update, e)
 		}
 		if update.Message != nil {
-			msg = MsgProcessing(&update, e)
+			msg = bot.MsgProcessing(&update, e)
 		}
 
 		_, err := bot.Send(msg)
-		CheckError(err)
+		bot.CheckError(err)
 	}
 }

@@ -36,6 +36,31 @@ const (
 	RULES                            = "rules"
 )
 
+type CallbackAction string
+
+const (
+	REGISTRATION_ACTION   CallbackAction = "registration"
+	SALE_ACTION                          = "sale"
+	SEARCH_REQUEST_ACTION                = "searchRequest"
+)
+
+type CallbackSubsection string
+
+const (
+	//common subsection
+
+	COMMON_CHOOSE_CONCERN      CallbackSubsection = "chooseConcern"
+	COMMON_CHOOSE_BRAND                           = "chooseBrand"
+	COMMON_CHOOSE_MODEL                           = "chooseModel"
+	COMMON_CHOOSE_ENGINE                          = "chooseEngine"
+	COMMON_CHOOSE_BOLT_PATTERN                    = "chooseBP"
+	COMMON_CHOOSE_CITY                            = "chooseCity"
+)
+
+type CallbackAuxiliaryAction string
+
+const ()
+
 type Resources struct {
 	Buttonstext struct {
 		Registration  string `yaml:"registration"`
@@ -151,8 +176,10 @@ type UserCar struct {
 }
 
 type CallBack struct {
-	Type CallbackType `json:"type"`
-	Data string       `json:"data"`
+	Subsection CallbackSubsection `json:"type"`
+	auxiliaryAction
+	Action CallbackAction `json:"action"`
+	Data   string         `json:"data"`
 }
 
 type Concern struct {
