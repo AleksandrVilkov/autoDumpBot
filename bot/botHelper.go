@@ -16,6 +16,9 @@ func CheckFatalError(e error) {
 		log.Fatal(e)
 	}
 }
+func CreateErrorMsg(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+	return tgbotapi.NewMessage(update.Message.Chat.ID, e.Resources.Errors.CommonError)
+}
 
 func CreateInlineKeyBoard(callback map[string]string, column int) tgbotapi.InlineKeyboardMarkup {
 	var rowsCount = int(math.Ceil(float64(float64(len(callback)) / float64(column))))

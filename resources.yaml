@@ -1,8 +1,7 @@
 buttonstext:
   registration: "Регистрация"
-  subscribe : "Подписаться"
-  searchRequest : "Запрос на поиск"
-  placeAnAd : "Подать объявление"
+  searchRequest : "Найти"
+  placeAnAd : "Продать"
   rules : "Правила"
 msgs:
   welcomeMessage: "Привет, добро пожаловать на свалку PSA. 

@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	PARAMS_PATH = "/home/vilkov/GolandProjects/psa_dump_bot/config/config.yaml"
-	RES_PATH    = "/home/vilkov/GolandProjects/psa_dump_bot/resources.yaml"
+	PARAMS_PATH = "/home/vilkov/GolandProjects/autoDumpBot/config/config.yaml"
+	RES_PATH    = "/home/vilkov/GolandProjects/autoDumpBot/resources.yaml"
 )
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 	}
 
 	e.TempData = make(map[string]bot.TempData)
-	StartBot(&e)
+	bot.StartBot(&e)
 }
 
 func getResources() *bot.Resources {

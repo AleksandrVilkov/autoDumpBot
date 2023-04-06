@@ -23,38 +23,34 @@ const (
 type CallbackType string
 
 const (
-	START_REGISTER      CallbackType = "startRegistration"
-	CHOOSE_CONCERN                   = "chooseConcern"
-	CHOOSE_BRAND                     = "chooseBrand"
-	CHOOSE_MODEL                     = "chooseModel"
-	CHOOSE_ENGINE                    = "chooseEngine"
-	CHOOSE_BOLT_PATTERN              = "chooseBP"
-	CHOOSE_CITY                      = "chooseCity"
-	SUBSCRIBE                        = "subscribe"
-	SEARCH_REQUEST                   = "searchRequest"
-	PLACE_AN_AD                      = "placeAnAd"
-	RULES                            = "rules"
+	START_REGISTER CallbackType = "startRegistration"
+
+	SUBSCRIBE      = "subscribe"
+	SEARCH_REQUEST = "searchRequest"
+	PLACE_AN_AD    = "placeAnAd"
+	RULES          = "rules"
+	NONE           = "none"
 )
 
-type CallbackAction string
+type Action string
 
 const (
-	REGISTRATION_ACTION   CallbackAction = "registration"
-	SALE_ACTION                          = "sale"
-	SEARCH_REQUEST_ACTION                = "searchRequest"
+	REGISTRATION_ACTION   Action = "register"
+	SALE_ACTION                  = "sale"
+	SEARCH_REQUEST_ACTION        = "searchRequest"
+	SUBSCRIBE_ACTION             = "subscribe"
+	RULES_ACTION                 = "rules"
 )
 
 type CallbackSubsection string
 
 const (
-	//common subsection
-
-	COMMON_CHOOSE_CONCERN      CallbackSubsection = "chooseConcern"
-	COMMON_CHOOSE_BRAND                           = "chooseBrand"
-	COMMON_CHOOSE_MODEL                           = "chooseModel"
-	COMMON_CHOOSE_ENGINE                          = "chooseEngine"
-	COMMON_CHOOSE_BOLT_PATTERN                    = "chooseBP"
-	COMMON_CHOOSE_CITY                            = "chooseCity"
+	CHOOSE_CONCERN      CallbackSubsection = "concern"
+	CHOOSE_BRAND                           = "brand"
+	CHOOSE_MODEL                           = "model"
+	CHOOSE_ENGINE                          = "engine"
+	CHOOSE_BOLT_PATTERN                    = "bp"
+	CHOOSE_CITY                            = "city"
 )
 
 type CallbackAuxiliaryAction string
@@ -135,7 +131,7 @@ func (c *Config) printCommands() string {
 
 type TempData struct {
 	UserId           string
-	LastCommand      string
+	Action           Action
 	CarData          TempCarData
 	SaleData         TempSaleData
 	SubscriptionData TempSubscriptionData
@@ -176,10 +172,17 @@ type UserCar struct {
 }
 
 type CallBack struct {
-	Subsection CallbackSubsection `json:"type"`
-	auxiliaryAction
-	Action CallbackAction `json:"action"`
-	Data   string         `json:"data"`
+	Subsection      CallbackSubsection      `json:"subsection"`
+	AuxiliaryAction CallbackAuxiliaryAction `json:"auxiliaryAction"`
+	Action          Action                  `json:"action"`
+	Data            string                  `json:"data"`
+}
+type ActionCallBack struct {
+	Action Action `json:"action"`
+}
+type SubsectionCallBack struct {
+	Subsection CallbackSubsection `json:"subsection"`
+	Data       string             `json:"data"`
 }
 
 type Concern struct {

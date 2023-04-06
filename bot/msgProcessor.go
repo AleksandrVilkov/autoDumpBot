@@ -16,10 +16,10 @@ func MsgProcessing(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConf
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, CreateWelcomeMsg(e))
 			msg.ReplyMarkup = CreateMainButtons(e)
 		default:
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, e.Resources.Errors.CommonError)
+			msg = CreateErrorMsg(update, e)
 		}
 	} else {
-		msg = tgbotapi.NewMessage(update.Message.Chat.ID, e.Resources.Errors.CommonError)
+		msg = CreateErrorMsg(update, e)
 	}
 
 	return msg

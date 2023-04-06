@@ -10,13 +10,14 @@ func saleProcessor(update *tgbotapi.Update, e *Environment) {
 	//	userTemp := e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)]
 	//	userTemp.LastCommand = PLACE_AN_AD
 }
-func createPlaceAnAdWelcomeResp(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), e.Resources.Msgs.StartSale)
-	//concerns := e.Storage.GetConcerns()
-	concerns := make([]Concern, 1)
-	concerns[0] = Concern{
-		Concern: "PSA",
-	}
-	msg.ReplyMarkup = CreateConcernButton(concerns)
-	return msg
-}
+
+//func createPlaceAnAdWelcomeResp(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+//	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), e.Resources.Msgs.StartSale)
+//	//concerns := e.Storage.GetConcerns()
+//	concerns := make([]Concern, 1)
+//	concerns[0] = Concern{
+//		Concern: "PSA",
+//	}
+//	msg.ReplyMarkup = CreateConcernButton(concerns)
+//	return msg
+//}
