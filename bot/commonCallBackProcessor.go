@@ -3,10 +3,10 @@ package bot
 import (
 	"encoding/json"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
-	"strconv"
+	"psa_dump_bot/bot/model"
 )
 
-func CallbackProcessing(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+func CallbackProcessing(update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
 	var msg tgbotapi.MessageConfig
 	callback, err := getCallback(e, update)
 
@@ -15,11 +15,11 @@ func CallbackProcessing(update *tgbotapi.Update, e *Environment) tgbotapi.Messag
 	}
 
 	switch callback.Action {
-	case REGISTRATION_ACTION:
+	case model.REGISTRATION_ACTION:
 		msg = registrationProcessor(update, e, &callback)
-	case SALE_ACTION:
+	case model.SALE_ACTION:
 		//saleProcessor(update, e)
-	case SEARCH_REQUEST_ACTION:
+	case model.SEARCH_REQUEST_ACTION:
 		//TODO проверяем зарегистрирован ли пользователь
 		msg = searchRequestProcessor(update, e, &callback)
 	default:
@@ -29,32 +29,20 @@ func CallbackProcessing(update *tgbotapi.Update, e *Environment) tgbotapi.Messag
 	return msg
 }
 
-func fillCallBackFromTemp(callBack *CallBack, tempData map[string]TempData, id int) {
-	temp := tempData[strconv.Itoa(id)]
-	if temp.Action != "" && callBack.Action == "" {
-		callBack.Action = temp.Action
-	}
-}
-
-func getCallback(e *Environment, update *tgbotapi.Update) (CallBack, error) {
+func getCallback(e *model.Environment, update *tgbotapi.Update) (model.CallBack, error) {
 	token, err := getToken(update.CallbackQuery.Data)
 	if err != nil {
-		return CallBack{}, err
+		return model.CallBack{}, err
 	}
-	stringCallback := e.TempData[token.Token]
-	var callback CallBack
-	errJ := json.Unmarshal([]byte(stringCallback), &callback)
-	if errJ != nil {
-		return CallBack{}, err
-	}
-	return callback, nil
+	callback := e.TempData.FindTempDataByToken(token.Token)
+	return *callback, nil
 }
 
-func getToken(data string) (ButtonData, error) {
-	var bd ButtonData
+func getToken(data string) (model.ButtonData, error) {
+	var bd model.ButtonData
 	e := json.Unmarshal([]byte(data), &bd)
 	if e != nil {
-		return ButtonData{}, e
+		return model.ButtonData{}, e
 	}
 	return bd, e
 }

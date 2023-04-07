@@ -5,12 +5,13 @@ import (
 	"log"
 	"os"
 	"psa_dump_bot/bot"
+	"psa_dump_bot/bot/model"
 	postgreSQL "psa_dump_bot/stogage"
 )
 
 const (
-	PARAMS_PATH = "/home/vilkov/GolandProjects/psa_dump_bot/config/config.yaml"
-	RES_PATH    = "/home/vilkov/GolandProjects/psa_dump_bot/resources.yaml"
+	PARAMS_PATH = "/home/vilkov/GolandProjects/autoDumpBot/config/config.yaml"
+	RES_PATH    = "/home/vilkov/GolandProjects/autoDumpBot/resources.yaml"
 )
 
 func main() {
@@ -19,25 +20,24 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var conf bot.Config
+	var conf model.Config
 	err = yaml.Unmarshal(paramsFile, &conf)
 
-	e := bot.Environment{
+	e := model.Environment{
 		Config:    &conf,
 		Storage:   postgreSQL.NewStorage(),
 		Resources: getResources(),
+		TempData:  postgreSQL.NewStorage(),
 	}
-
-	e.TempData = make(map[string]string)
 	bot.StartBot(&e)
 }
 
-func getResources() *bot.Resources {
+func getResources() *model.Resources {
 	paramsFile, err := os.ReadFile(RES_PATH)
 	if err != nil {
 		log.Fatal(err)
 	}
-	var res bot.Resources
+	var res model.Resources
 	unmarshalErr := yaml.Unmarshal(paramsFile, &res)
 
 	if unmarshalErr != nil {

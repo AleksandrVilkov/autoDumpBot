@@ -1,42 +1,49 @@
 package bot
 
-func CreateWelcomeMsg(e *Environment) string {
+import (
+	"psa_dump_bot/bot/model"
+)
+
+func CreateWelcomeMsg(e *model.Environment) string {
 	return e.Resources.Msgs.WelcomeMessage
 }
-func CreateErrAuthMsg(e *Environment) string {
+func CreateWelcomeRegisteredMsg(e *model.Environment) string {
+	return e.Resources.Msgs.WelcomeRegistered
+}
+func CreateErrAuthMsg(e *model.Environment) string {
 	return e.Resources.Errors.AuthError + " \nПодпишись: \n" + e.Config.ValidateData.ChannelUrl
 }
 
-func CreateConcernMsgForReg(e *Environment) string {
+func CreateConcernMsgForReg(e *model.Environment) string {
 	return e.Resources.Msgs.Registration.ChoiceConcern
 }
 
-func CreateBrandMsgForReg(e *Environment) string {
+func CreateBrandMsgForReg(e *model.Environment) string {
 	return e.Resources.Msgs.Registration.CarBrandEnter
 }
 
-func CreateModelMsgForReg(e *Environment) string {
+func CreateModelMsgForReg(e *model.Environment) string {
 	return e.Resources.Msgs.Registration.CarModelEnter
 }
-func CreateEngineMsgForReg(e *Environment) string {
+func CreateEngineMsgForReg(e *model.Environment) string {
 	return e.Resources.Msgs.Registration.CarEngineEnter
 }
 
-func CreateBoltPatternMsg(e *Environment) string {
+func CreateBoltPatternMsg(e *model.Environment) string {
 	return e.Resources.Msgs.Registration.CarBoltPatternEnter
 }
 
-func CreateRegionMsg(e *Environment) string {
+func CreateRegionMsg(e *model.Environment) string {
 	return e.Resources.Msgs.Registration.RegionEnter
 }
 
-func CreateConcernMsgForSearch(e *Environment) string {
+func CreateConcernMsgForSearch(e *model.Environment) string {
 	return e.Resources.Msgs.Search.ChoiceConcern
 }
 
-func CreateBrandMsgForSearch(e *Environment) string {
+func CreateBrandMsgForSearch(e *model.Environment) string {
 	return e.Resources.Msgs.Search.CarBrandEnter
 }
-func CreateModelMsgForSearch(e *Environment) string {
+func CreateModelMsgForSearch(e *model.Environment) string {
 	return e.Resources.Msgs.Search.CarModelEnter
 }

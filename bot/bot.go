@@ -2,9 +2,10 @@ package bot
 
 import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	"psa_dump_bot/bot/model"
 )
 
-func StartBot(e *Environment) {
+func StartBot(e *model.Environment) {
 
 	bot, err := tgbotapi.NewBotAPI(e.Config.Token)
 	CheckFatalError(err)

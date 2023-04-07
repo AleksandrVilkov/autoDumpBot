@@ -2,9 +2,10 @@ package bot
 
 import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	"psa_dump_bot/bot/model"
 )
 
-func searchRequestProcessor(update *tgbotapi.Update, e *Environment, cb *CallBack) tgbotapi.MessageConfig {
+func searchRequestProcessor(update *tgbotapi.Update, e *model.Environment, cb *model.CallBack) tgbotapi.MessageConfig {
 	var msg tgbotapi.MessageConfig
 	//switch cb.Subsection {
 	//case "":
@@ -38,7 +39,7 @@ func searchRequestProcessor(update *tgbotapi.Update, e *Environment, cb *CallBac
 	return msg
 }
 
-func createStartSearchRequestResponse(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+func createStartSearchRequestResponse(update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateConcernMsgForSearch(e))
 	//concerns := e.Storage.GetConcerns()
 	////concerns := make([]Concern, 2)
@@ -49,7 +50,7 @@ func createStartSearchRequestResponse(update *tgbotapi.Update, e *Environment) t
 	return msg
 }
 
-func createConcernForSearchResponse(c Concern, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+func createConcernForSearchResponse(c model.Concern, update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateBrandMsgForSearch(e))
 	//brands := e.Storage.GetBrands(c.Concern)
 	//brands := make([]Brand, 2)
@@ -63,7 +64,7 @@ func createConcernForSearchResponse(c Concern, update *tgbotapi.Update, e *Envir
 	return msg
 }
 
-func createBrandForSearchResponse(b Brand, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+func createBrandForSearchResponse(b model.Brand, update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateModelMsgForSearch(e))
 	//models := e.Storage.GetModels(b.Brand)
 	//models := make([]Model, 1)

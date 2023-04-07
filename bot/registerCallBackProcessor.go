@@ -1,36 +1,31 @@
 package bot
 
 import (
+	"errors"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	"log"
+	"psa_dump_bot/bot/model"
+	"time"
 )
 
-func registrationProcessor(update *tgbotapi.Update, e *Environment, cb *CallBack) tgbotapi.MessageConfig {
+func registrationProcessor(update *tgbotapi.Update, e *model.Environment, cb *model.CallBack) tgbotapi.MessageConfig {
 	var msg tgbotapi.MessageConfig
 
 	switch cb.Subsection {
 	case "":
-		msg = createStartRegisterResponse(update, e, cb)
-	case CHOOSE_CONCERN:
-		msg = createConcernForRegResponse(cb, update, e)
-	case CHOOSE_BRAND:
-		msg = createBrandForRegResponse(cb, update, e)
-	case CHOOSE_MODEL:
-	//	msg = createModelForRegResponse(m, userTemp.CarData.CarBrand, update, e)
-	case CHOOSE_ENGINE:
-	//	msg = createEngineForRegResponse(userTemp.CarData.CarModel, userTemp.CarData.CarBrand, update, e)
-	case CHOOSE_BOLT_PATTERN:
-	//	msg = createBoltPatternForRegResponse(update, e)
-	case CHOOSE_CITY:
-	//	var region Region
-	//	userTemp := e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)]
-	//	_ = json.Unmarshal([]byte(cb.Data), &region)
-	//	userTemp.Region = region
-	//	e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)] = userTemp
-	//if e.Storage.SaveUser(CreateUserFromTemp(userTemp)) {
-	//	msg = createOkSaveUserResponse(update, e)
-	//} else {
-	//	msg = createErrSaveUserResponse(update, e)
-	//}
+		msg = createStartRegisterMsg(update, e, cb)
+	case model.CHOOSE_CONCERN:
+		msg = createConcernMsgForReg(cb, update, e)
+	case model.CHOOSE_BRAND:
+		msg = createBrandMsgForReg(cb, update, e)
+	case model.CHOOSE_MODEL:
+		msg = createModelMsgForReg(cb, update, e)
+	case model.CHOOSE_ENGINE:
+		msg = createEngineMsgForReg(cb, update, e)
+	case model.CHOOSE_BOLT_PATTERN:
+		msg = createBoltPatternMsgForReg(cb, update, e)
+	case model.CHOOSE_CITY:
+		msg = createFinishMsgForReg(cb, update, e)
 	default:
 		msg = CreateErrorMsg(update, e)
 	}
@@ -38,57 +33,91 @@ func registrationProcessor(update *tgbotapi.Update, e *Environment, cb *CallBack
 	return msg
 }
 
-func createStartRegisterResponse(update *tgbotapi.Update, e *Environment, cb *CallBack) tgbotapi.MessageConfig {
+func createStartRegisterMsg(update *tgbotapi.Update, e *model.Environment, cb *model.CallBack) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateConcernMsgForReg(e))
 	concerns := e.Storage.GetConcerns()
 	msg.ReplyMarkup = CreateConcernButton(concerns, cb, e)
 	return msg
 }
 
-func createConcernForRegResponse(cb *CallBack, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+func createConcernMsgForReg(cb *model.CallBack, update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateBrandMsgForReg(e))
 	brands := e.Storage.GetBrands(cb.CarData.Concern)
 	msg.ReplyMarkup = CreateAutoBrandButton(brands, e, cb)
 	return msg
 }
 
-func createBrandForRegResponse(cb *CallBack, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+func createBrandMsgForReg(cb *model.CallBack, update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateModelMsgForReg(e))
 	models := e.Storage.GetModels(cb.CarData.Brand)
 	msg.ReplyMarkup = CreateModelsButton(models, e, cb)
 	return msg
 }
 
-//
-//func createModelForRegResponse(m Model, b Brand, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
-//	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateEngineMsgForReg(e))
-//	engines := e.Storage.GetEngines(m.Model, b.Brand)
-//	msg.ReplyMarkup = CreateEnginesButton(engines)
-//	return msg
-//}
-//func createEngineForRegResponse(m Model, b Brand, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
-//	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateBoltPatternMsg(e))
-//	bps := e.Storage.GetBoltPatterns(m.Model, b.Brand)
-//	msg.ReplyMarkup = CreateBoltPatternsButton(bps)
-//	return msg
-//}
-//
-//func createBoltPatternForRegResponse(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
-//	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateRegionMsg(e))
-//	regions := e.Storage.GetAllRegions()
-//	msg.ReplyMarkup = CreateRegionsButton(regions)
-//	return msg
-//}
+func createModelMsgForReg(cb *model.CallBack, update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
+	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateEngineMsgForReg(e))
+	engines := e.Storage.GetEngines(cb.CarData.Model, cb.CarData.Brand)
+	msg.ReplyMarkup = CreateEnginesButton(engines, e, cb)
+	return msg
+}
 
-//
-//func createOkSaveUserResponse(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
-//	//TODO Если успешно сохранили
-//	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), "")
-//	return msg
-//}
-//
-//func createErrSaveUserResponse(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
-//	//TODO Если не удалось сохранить
-//	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), "")
-//	return msg
-//}
+func createEngineMsgForReg(cb *model.CallBack, update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
+	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateBoltPatternMsg(e))
+	bps := e.Storage.GetBoltPatterns(cb.CarData.Model, cb.CarData.Brand)
+	msg.ReplyMarkup = CreateBoltPatternsButton(bps, e, cb)
+	return msg
+}
+
+func createBoltPatternMsgForReg(cb *model.CallBack, update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
+	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateRegionMsg(e))
+	regions := e.Storage.GetAllRegions()
+	msg.ReplyMarkup = CreateRegionsButton(regions, e, cb)
+	return msg
+}
+
+func createFinishMsgForReg(cb *model.CallBack, update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
+	user, err := createUserFromCallback(cb)
+
+	if err != nil {
+		return tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), e.Resources.Errors.ErrorReservation)
+	}
+
+	if !e.Storage.SaveUser(user) {
+		return tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), e.Resources.Errors.ErrorReservation)
+	}
+	return tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), e.Resources.Success.SuccessReservation)
+}
+
+func createUserFromCallback(cb *model.CallBack) (*model.User, error) {
+	if !validateCallbackForCreateUser(cb) {
+		log.Print("incomplete data for the user record, userID = " + cb.UserId)
+		return &model.User{}, errors.New("incomplete data for the user record")
+	}
+	return &model.User{
+		CreateDate: time.Time{},
+		Role:       model.USER_ROLE,
+		Login:      cb.UserId,
+		Region: model.Region{
+			Id:         cb.UserData.RegionId,
+			RegionName: cb.UserData.RegionName,
+		},
+		UserCar: model.UserCar{
+			CreateDate:  time.Time{},
+			Concern:     model.Concern{Concern: cb.CarData.Concern},
+			Model:       model.Model{Model: cb.CarData.Model},
+			Engine:      model.Engine{EngineName: cb.CarData.EngineName},
+			BoltPattern: model.BoltPattern{BoltPatternSize: cb.CarData.BoltPatternSize},
+			Brand:       model.Brand{Brand: cb.CarData.Brand},
+		},
+	}, nil
+}
+
+func validateCallbackForCreateUser(cb *model.CallBack) bool {
+	return !(cb.UserId == "" ||
+		cb.UserData.RegionId == 0 ||
+		cb.CarData.Concern == "" ||
+		cb.CarData.Model == "" ||
+		cb.CarData.EngineName == "" ||
+		cb.CarData.BoltPatternSize == "" ||
+		cb.CarData.Brand == "")
+}

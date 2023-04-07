@@ -2,9 +2,10 @@ package bot
 
 import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	"psa_dump_bot/bot/model"
 )
 
-func saleProcessor(update *tgbotapi.Update, e *Environment) {
+func saleProcessor(update *tgbotapi.Update, e *model.Environment) {
 	//case PLACE_AN_AD:
 	//	msg = createPlaceAnAdWelcomeResp(update, e)
 	//	userTemp := e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)]

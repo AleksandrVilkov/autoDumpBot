@@ -1,4 +1,4 @@
-package bot
+package model
 
 type Storage interface {
 	GetConcerns() []Concern
@@ -8,5 +8,6 @@ type Storage interface {
 	GetBoltPatterns(model string, brand string) []BoltPattern
 	GetAllRegions() []Region
 	SaveUser(user *User) bool
+	CheckUser(login string) bool
 	UpdateUser() bool
 }

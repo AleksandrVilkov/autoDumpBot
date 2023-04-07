@@ -1,9 +1,11 @@
 package postgreSQL
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
-	"psa_dump_bot/bot"
+	"psa_dump_bot/bot/model"
+	"strconv"
+	"time"
 )
 
 const (
@@ -19,11 +21,12 @@ const (
 	ALL         = "* "
 	AND         = "AND "
 
-	CAR_TABLE_NAME    = "CAR "
-	USER_TABLE_NAME   = "CLIENT "
-	REGION_TABLE_NAME = "REGION "
+	CAR_TABLE_NAME      = "CAR "
+	USER_TABLE_NAME     = "CLIENT "
+	REGION_TABLE_NAME   = "REGION "
+	TEMPDATA_TABLE_NAME = "TEMPDATA "
 
-	TEAMPLEATE_TIME = "2006-01-02"
+	TEAMPLEATE_TIME = "2006-01-02T15:04:05Z07:00"
 )
 
 type Storage struct {
@@ -33,11 +36,60 @@ type Storage struct {
 func NewStorage() *Storage {
 	return &Storage{}
 }
-func (s *Storage) GetConcerns() []bot.Concern {
+func (s *Storage) CheckUser(login string) bool {
+	query := SELECT + "login " + FROM + USER_TABLE_NAME + WHERE + "login = '" + login + "'"
+	resultSearch := s.psql.GetRows(query)
+	return resultSearch.Next()
+}
+
+func (s *Storage) SaveTempData(token string, c *model.CallBack) bool {
+	query := INSERT_INTO + TEMPDATA_TABLE_NAME +
+		"(" + "token" + ", " +
+		"createdDate" + ", " +
+		"callback" + ") " + VALUES + "(" +
+		" '" + token + "', " +
+		" '" + time.Now().Format(TEAMPLEATE_TIME) + "', " +
+		" '" + c.ToString() + "');"
+	_, err := s.psql.SendQuery(query)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	return true
+}
+func (s *Storage) FindTempDataByToken(token string) *model.CallBack {
+	query := SELECT + "callback " + FROM + TEMPDATA_TABLE_NAME + WHERE + "token = '" + token + "'"
+	resultSearch := s.psql.GetRows(query)
+
+	count := 0
+	var stringCallback string
+	for resultSearch.Next() {
+		if count != 0 {
+			log.Println("More than one callback found for the same token")
+			return &model.CallBack{}
+		}
+		err := resultSearch.Scan(&stringCallback)
+		if err != nil {
+			log.Println(err)
+
+			return &model.CallBack{}
+		}
+		count++
+	}
+	var result model.CallBack
+	err := json.Unmarshal([]byte(stringCallback), &result)
+	if err != nil {
+		log.Println(err)
+		return &model.CallBack{}
+	}
+
+	return &result
+}
+func (s *Storage) GetConcerns() []model.Concern {
 	query := SELECT + DISTINCT + "concern " + FROM + CAR_TABLE_NAME
 	resultSearch := s.psql.GetRows(query)
 
-	var result []bot.Concern
+	var result []model.Concern
 	for resultSearch.Next() {
 		var concern string
 		err := resultSearch.Scan(&concern)
@@ -47,15 +99,15 @@ func (s *Storage) GetConcerns() []bot.Concern {
 			return result
 		}
 
-		result = append(result, bot.Concern{Concern: concern})
+		result = append(result, model.Concern{Concern: concern})
 	}
 	return result
 }
-func (s *Storage) GetBrands(concern string) []bot.Brand {
+func (s *Storage) GetBrands(concern string) []model.Brand {
 	query := SELECT + DISTINCT + "brand " + FROM + CAR_TABLE_NAME + WHERE + "concern = '" + concern + "'"
 	resultSearch := s.psql.GetRows(query)
 
-	var result []bot.Brand
+	var result []model.Brand
 
 	for resultSearch.Next() {
 		var brand string
@@ -65,16 +117,16 @@ func (s *Storage) GetBrands(concern string) []bot.Brand {
 			log.Println("Error scan brand in func GetBrands()")
 			return result
 		}
-		result = append(result, bot.Brand{Brand: brand})
+		result = append(result, model.Brand{Brand: brand})
 	}
 	return result
 }
 
-func (s *Storage) GetModels(brand string) []bot.Model {
+func (s *Storage) GetModels(brand string) []model.Model {
 	query := SELECT + DISTINCT + "model " + FROM + CAR_TABLE_NAME + WHERE + "brand = '" + brand + "'"
 	resultSearch := s.psql.GetRows(query)
 
-	var result []bot.Model
+	var result []model.Model
 	for resultSearch.Next() {
 		var modelName string
 		err := resultSearch.Scan(&modelName)
@@ -83,17 +135,17 @@ func (s *Storage) GetModels(brand string) []bot.Model {
 			return result
 		}
 
-		result = append(result, bot.Model{Model: modelName})
+		result = append(result, model.Model{Model: modelName})
 	}
 
 	return result
 }
-func (s *Storage) GetEngines(model string, brand string) []bot.Engine {
-	query := SELECT + DISTINCT + "engine " + FROM + CAR_TABLE_NAME + WHERE + "model ='" + model + "' " + AND + "brand ='" +
+func (s *Storage) GetEngines(carModel string, brand string) []model.Engine {
+	query := SELECT + DISTINCT + "engine " + FROM + CAR_TABLE_NAME + WHERE + "model ='" + carModel + "' " + AND + "brand ='" +
 		brand + "'"
 
 	resultSearch := s.psql.GetRows(query)
-	var result []bot.Engine
+	var result []model.Engine
 
 	for resultSearch.Next() {
 		var engineName string
@@ -102,16 +154,16 @@ func (s *Storage) GetEngines(model string, brand string) []bot.Engine {
 			log.Println("Error scan engine in func GetEngines()")
 			return result
 		}
-		result = append(result, bot.Engine{EngineName: engineName})
+		result = append(result, model.Engine{EngineName: engineName})
 	}
 	return result
 }
-func (s *Storage) GetBoltPatterns(model string, brand string) []bot.BoltPattern {
-	query := SELECT + DISTINCT + "boltPattern " + FROM + CAR_TABLE_NAME + WHERE + "model ='" + model + "' " + AND + "brand ='" +
+func (s *Storage) GetBoltPatterns(carModel string, brand string) []model.BoltPattern {
+	query := SELECT + DISTINCT + "boltPattern " + FROM + CAR_TABLE_NAME + WHERE + "model ='" + carModel + "' " + AND + "brand ='" +
 		brand + "'"
 
 	resultSearch := s.psql.GetRows(query)
-	var result []bot.BoltPattern
+	var result []model.BoltPattern
 
 	for resultSearch.Next() {
 		var size string
@@ -120,54 +172,58 @@ func (s *Storage) GetBoltPatterns(model string, brand string) []bot.BoltPattern 
 			log.Println("Error scan boltPattern in func GetBoltPatterns()")
 			return result
 		}
-		result = append(result, bot.BoltPattern{
+		result = append(result, model.BoltPattern{
 			BoltPatternSize: size,
 		})
 	}
 	return result
 }
-func (s *Storage) SaveUser(u *bot.User) bool {
-	a := s.findCarId(u.UserCar.Concern, u.UserCar.Brand, u.UserCar.Model, u.UserCar.Engine)
-	//userQueryIncerst := INSERT_INTO + USER_TABLE_NAME +
-	//	"(" + "createddate" + ", " +
-	//	"role" + ", " +
-	//	"login" + ", " +
-	//	"lastname" + " ," +
-	//	"regionid" + " ," +
-	//	"carid" + ") " + VALUES + "(" +
-	//	" '" + u.CreateDate.Format(TEAMPLEATE_TIME) + "', " +
-	//	" '" + string(u.Role) + "', " +
-	//	" '" + u.Login + "', " +
-	//	" '" + strconv.Itoa(u.Id) + "', " +
-	//	" '" + u.Region.RegionName +
-	//	" '" + strconv.Itoa(u.UserCar.Id) + "')"
-	//
-	//result, err := s.psql.SendQuery(userQueryIncerst)
-	//TODO
+func (s *Storage) SaveUser(u *model.User) bool {
+	carID := s.findCarId(u.UserCar.Concern, u.UserCar.Brand, u.UserCar.Model, u.UserCar.Engine)
+	if carID == 0 {
+		log.Println("failed to get car id from input")
+		return false
+	}
+	userQueryIncerst := INSERT_INTO + USER_TABLE_NAME +
+		"(" + "createddate" + ", " +
+		"role" + ", " +
+		"login" + ", " +
+		"regionid" + " ," +
+		"carid" + ") " + VALUES + "(" +
+		" '" + u.CreateDate.Format(TEAMPLEATE_TIME) + "', " +
+		" '" + string(u.Role) + "', " +
+		" '" + u.Login + "', " +
+		" '" + strconv.Itoa(u.Region.Id) + "', " +
+		" '" + strconv.Itoa(carID) + "');"
 
-	fmt.Println(a)
-	return false
+	_, err := s.psql.SendQuery(userQueryIncerst)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	return true
 }
 
-func (s *Storage) GetAllRegions() []bot.Region {
+func (s *Storage) GetAllRegions() []model.Region {
 	query := SELECT + "*" + FROM + REGION_TABLE_NAME
 	resultSearch := s.psql.GetRows(query)
-	var result []bot.Region
+	var result []model.Region
 	for resultSearch.Next() {
-		var id string
+		var id int
 		var name string
 		err := resultSearch.Scan(&id, &name)
 		if err != nil {
 			log.Println("Error scan regions in func GetAllRegions()")
 			return result
 		}
-		result = append(result, bot.Region{
+		result = append(result, model.Region{
+			Id:         id,
 			RegionName: name,
 		})
 	}
 	return result
 }
-func (s *Storage) findCarId(concern bot.Concern, brand bot.Brand, model bot.Model, engine bot.Engine) int {
+func (s *Storage) findCarId(concern model.Concern, brand model.Brand, model model.Model, engine model.Engine) int {
 	//TODO подумать как сделать лучше
 
 	query := SELECT + "*" + FROM + CAR_TABLE_NAME + WHERE + "model ='" + model.Model + "'" + AND + "concern ='" + concern.Concern + "' " + AND + "brand ='" + brand.Brand + "' " + AND +

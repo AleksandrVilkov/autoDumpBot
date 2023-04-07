@@ -2,12 +2,13 @@ package bot
 
 import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	"psa_dump_bot/bot/model"
 )
 
-func getMsgOnlyTextForChannel(e *Environment, test string) tgbotapi.MessageConfig {
+func getMsgOnlyTextForChannel(e *model.Environment, test string) tgbotapi.MessageConfig {
 	return tgbotapi.NewMessage(e.Config.ValidateData.ChannelID, test)
 }
-func getMsgWithPhotoForChannel(e *Environment, photo []byte) tgbotapi.PhotoConfig {
+func getMsgWithPhotoForChannel(e *model.Environment, photo []byte) tgbotapi.PhotoConfig {
 
 	photoFileBytes := tgbotapi.FileBytes{
 		Name:  "picture",
@@ -16,7 +17,7 @@ func getMsgWithPhotoForChannel(e *Environment, photo []byte) tgbotapi.PhotoConfi
 	return tgbotapi.NewPhotoUpload(e.Config.ValidateData.ChannelID, photoFileBytes)
 }
 
-func getMsgWithPhotoForChannelWithCaption(e *Environment, photo []byte, text string) tgbotapi.PhotoConfig {
+func getMsgWithPhotoForChannelWithCaption(e *model.Environment, photo []byte, text string) tgbotapi.PhotoConfig {
 
 	photoFileBytes := tgbotapi.FileBytes{
 		Name:  "picture",
@@ -28,7 +29,7 @@ func getMsgWithPhotoForChannelWithCaption(e *Environment, photo []byte, text str
 	return msg
 }
 
-func getMsgWithSomePhotosForChannelWithCaption(e *Environment, msgs []tgbotapi.Message) tgbotapi.MediaGroupConfig {
+func getMsgWithSomePhotosForChannelWithCaption(e *model.Environment, msgs []tgbotapi.Message) tgbotapi.MediaGroupConfig {
 
 	var listMediaVideoInput []interface{}
 
