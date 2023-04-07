@@ -1,6 +1,9 @@
 package bot
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type ChatMemberStatus string
 
@@ -126,7 +129,7 @@ type Environment struct {
 	Config    *Config
 	Storage   Storage
 	Resources *Resources
-	TempData  map[string]TempData
+	TempData  map[string]string
 }
 
 func (c *Config) printCommands() string {
@@ -190,11 +193,31 @@ type UserCar struct {
 }
 
 type CallBack struct {
+	UserId          string                  `json:"userId"`
 	Subsection      CallbackSubsection      `json:"subsection"`
 	AuxiliaryAction CallbackAuxiliaryAction `json:"auxiliaryAction"`
 	Action          Action                  `json:"action"`
-	Data            string                  `json:"data"`
+	UserData        struct {
+		RegionName string `json:"name"`
+	}
+	CarData struct {
+		Concern         string `json:"concern"`
+		Brand           string `json:"brand"`
+		Model           string `json:"model"`
+		EngineName      string `json:"engineName"`
+		BoltPatternSize string `json:"boltPattern"`
+	} `json:"data"`
 }
+
+func (c *CallBack) toString() string {
+	str, _ := json.Marshal(c)
+	return string(str)
+}
+
+type ButtonData struct {
+	Token string `json:"token"`
+}
+
 type ActionCallBack struct {
 	Action Action `json:"action"`
 }

@@ -1,6 +1,9 @@
 package bot
 
 import (
+	"crypto/md5"
+	"encoding/hex"
+	"encoding/json"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 	"log"
 	"math"
@@ -16,6 +19,20 @@ func CheckFatalError(e error) {
 		log.Fatal(e)
 	}
 }
+
+func GetMD5Hash(text string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(text))
+	return hex.EncodeToString(hasher.Sum(nil))
+}
+
+func GetMD5HashFromCallBack(c *CallBack) string {
+	hasher := md5.New()
+	data, _ := json.Marshal(c)
+	hasher.Write(data)
+	return hex.EncodeToString(hasher.Sum(nil))
+}
+
 func CreateErrorMsg(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
 	return tgbotapi.NewMessage(update.Message.Chat.ID, e.Resources.Errors.CommonError)
 }

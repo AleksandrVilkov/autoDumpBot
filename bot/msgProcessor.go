@@ -14,7 +14,7 @@ func MsgProcessing(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConf
 		switch update.Message.Text {
 		case e.Config.Commands.Start:
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, CreateWelcomeMsg(e))
-			msg.ReplyMarkup = CreateMainButtons(e)
+			msg.ReplyMarkup = CreateMainButtons(e, update)
 		default:
 			msg = CreateErrorMsg(update, e)
 		}

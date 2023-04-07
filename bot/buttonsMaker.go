@@ -3,77 +3,80 @@ package bot
 import (
 	"encoding/json"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
+	"strconv"
 )
 
-func CreateMainButtons(e *Environment) tgbotapi.InlineKeyboardMarkup {
+func CreateMainButtons(e *Environment, update *tgbotapi.Update) tgbotapi.InlineKeyboardMarkup {
 	data := make(map[string]string)
 
-	registration, _ := json.Marshal(ActionCallBack{
+	registrationCallBack := CallBack{
 		Action: REGISTRATION_ACTION,
-	})
-	data[e.Resources.Buttonstext.Registration] = string(registration)
+		UserId: strconv.FormatInt(update.Message.Chat.ID, 10),
+	}
+	registrationToken := GetMD5Hash(registrationCallBack.toString())
+	e.TempData[registrationToken] = registrationCallBack.toString()
+	data[e.Resources.Buttonstext.Registration] = getButtonData(registrationToken)
 
-	searchRequest, _ := json.Marshal(ActionCallBack{
+	searchRequestCallBack := CallBack{
 		Action: SEARCH_REQUEST_ACTION,
-	})
-	data[e.Resources.Buttonstext.SearchRequest] = string(searchRequest)
+		UserId: strconv.FormatInt(update.Message.Chat.ID, 10),
+	}
+	searchRequestToken := GetMD5Hash(searchRequestCallBack.toString())
+	e.TempData[searchRequestToken] = searchRequestCallBack.toString()
+	data[e.Resources.Buttonstext.SearchRequest] = getButtonData(searchRequestToken)
 
-	placeAnAd, _ := json.Marshal(ActionCallBack{
+	saleCallBack := CallBack{
 		Action: SALE_ACTION,
-	})
-	data[e.Resources.Buttonstext.PlaceAnAd] = string(placeAnAd)
+		UserId: strconv.FormatInt(update.Message.Chat.ID, 10),
+	}
+	saleToken := GetMD5Hash(saleCallBack.toString())
+	e.TempData[saleToken] = saleCallBack.toString()
+	data[e.Resources.Buttonstext.PlaceAnAd] = getButtonData(saleToken)
 
-	rules, _ := json.Marshal(ActionCallBack{
+	ruleCallback := CallBack{
 		Action: RULES_ACTION,
-	})
-	data[e.Resources.Buttonstext.Rules] = string(rules)
+		UserId: strconv.FormatInt(update.Message.Chat.ID, 10),
+	}
+	ruleToken := GetMD5Hash(ruleCallback.toString())
+	e.TempData[ruleToken] = ruleCallback.toString()
+
+	data[e.Resources.Buttonstext.Rules] = getButtonData(ruleToken)
 	return CreateInlineKeyBoard(data, 1)
 }
 
-func CreateConcernButton(concerns []Concern) tgbotapi.InlineKeyboardMarkup {
+func CreateConcernButton(concerns []Concern, c *CallBack, e *Environment) tgbotapi.InlineKeyboardMarkup {
 	data := make(map[string]string)
 	for i := 0; i < len(concerns); i++ {
-
-		concern, _ := json.Marshal(Concern{Concern: concerns[i].Concern})
-		concernData, _ := json.Marshal(SubsectionCallBack{
-			Subsection: CHOOSE_CONCERN,
-			Data:       string(concern),
-		})
-
-		data[concerns[i].Concern] = string(concernData)
+		c.CarData.Concern = concerns[i].Concern
+		c.Subsection = CHOOSE_CONCERN
+		token := GetMD5Hash(c.toString())
+		e.TempData[token] = c.toString()
+		data[concerns[i].Concern] = getButtonData(token)
 	}
-
 	return CreateInlineKeyBoard(data, 1)
 }
 
-func CreateAutoBrandButton(brands []Brand) tgbotapi.InlineKeyboardMarkup {
-
+func CreateAutoBrandButton(brands []Brand, e *Environment, cb *CallBack) tgbotapi.InlineKeyboardMarkup {
 	data := make(map[string]string)
 	for i := 0; i < len(brands); i++ {
-
-		bJson, _ := json.Marshal(Brand{Brand: brands[i].Brand})
-		brandData, _ := json.Marshal(SubsectionCallBack{
-			Subsection: CHOOSE_BRAND,
-			Data:       string(bJson),
-		})
-
-		data[brands[i].Brand] = string(brandData)
+		cb.CarData.Brand = brands[i].Brand
+		cb.Subsection = CHOOSE_BRAND
+		token := GetMD5Hash(cb.toString())
+		e.TempData[token] = cb.toString()
+		data[brands[i].Brand] = getButtonData(token)
 	}
 
 	return CreateInlineKeyBoard(data, 1)
 }
-func CreateModelsButton(models []Model) tgbotapi.InlineKeyboardMarkup {
+func CreateModelsButton(models []Model, e *Environment, cb *CallBack) tgbotapi.InlineKeyboardMarkup {
 
 	data := make(map[string]string)
 	for i := 0; i < len(models); i++ {
-
-		mJson, _ := json.Marshal(Model{Model: models[i].Model})
-		modelData, _ := json.Marshal(SubsectionCallBack{
-			Subsection: CHOOSE_MODEL,
-			Data:       string(mJson),
-		})
-
-		data[models[i].Model] = string(modelData)
+		cb.CarData.Model = models[i].Model
+		cb.Subsection = CHOOSE_MODEL
+		token := GetMD5Hash(cb.toString())
+		e.TempData[token] = cb.toString()
+		data[models[i].Model] = getButtonData(token)
 	}
 
 	return CreateInlineKeyBoard(data, 1)
@@ -120,4 +123,11 @@ func CreateRegionsButton(r []Region) tgbotapi.InlineKeyboardMarkup {
 	}
 
 	return CreateInlineKeyBoard(data, 1)
+}
+
+func getButtonData(token string) string {
+	buttonData, _ := json.Marshal(ButtonData{
+		Token: token,
+	})
+	return string(buttonData)
 }

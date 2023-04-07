@@ -8,11 +8,10 @@ import (
 
 func CallbackProcessing(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
 	var msg tgbotapi.MessageConfig
-	callback, err := getCallBack(update.CallbackQuery.Data)
-	fillCallBackFromTemp(&callback, e.TempData, update.CallbackQuery.From.ID)
+	callback, err := getCallback(e, update)
 
 	if err != nil {
-		return tgbotapi.NewMessage(update.Message.Chat.ID, e.Resources.Errors.CommonError)
+		return CreateErrorMsg(update, e)
 	}
 
 	switch callback.Action {
@@ -37,11 +36,25 @@ func fillCallBackFromTemp(callBack *CallBack, tempData map[string]TempData, id i
 	}
 }
 
-func getCallBack(data string) (CallBack, error) {
-	var callback CallBack
-	e := json.Unmarshal([]byte(data), &callback)
-	if e != nil {
-		return CallBack{}, e
+func getCallback(e *Environment, update *tgbotapi.Update) (CallBack, error) {
+	token, err := getToken(update.CallbackQuery.Data)
+	if err != nil {
+		return CallBack{}, err
 	}
-	return callback, e
+	stringCallback := e.TempData[token.Token]
+	var callback CallBack
+	errJ := json.Unmarshal([]byte(stringCallback), &callback)
+	if errJ != nil {
+		return CallBack{}, err
+	}
+	return callback, nil
+}
+
+func getToken(data string) (ButtonData, error) {
+	var bd ButtonData
+	e := json.Unmarshal([]byte(data), &bd)
+	if e != nil {
+		return ButtonData{}, e
+	}
+	return bd, e
 }

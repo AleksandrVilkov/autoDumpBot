@@ -23,6 +23,7 @@ func StartBot(e *Environment) {
 		}
 
 		if update.CallbackQuery != nil {
+
 			msg = CallbackProcessing(&update, e)
 		}
 		if update.Message != nil {
