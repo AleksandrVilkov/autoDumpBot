@@ -23,7 +23,7 @@ func registrationProcessor(update *tgbotapi.Update, e *Environment, cb *CallBack
 	case CHOOSE_CONCERN:
 		var c Concern
 		_ = json.Unmarshal([]byte(cb.Data), &c)
-		msg = createChooseConcernResponse(c, update, e)
+		msg = createConcernForRegResponse(c, update, e)
 		userTemp := e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)]
 		userTemp.CarData.Concern = c
 		userTemp.Action = REGISTRATION_ACTION
@@ -32,7 +32,7 @@ func registrationProcessor(update *tgbotapi.Update, e *Environment, cb *CallBack
 	case CHOOSE_BRAND:
 		var b Brand
 		_ = json.Unmarshal([]byte(cb.Data), &b)
-		msg = createBrandResponse(b, update, e)
+		msg = createBrandForRegResponse(b, update, e)
 		userTemp := e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)]
 		userTemp.CarData.CarBrand = b
 		userTemp.Action = REGISTRATION_ACTION
@@ -44,7 +44,7 @@ func registrationProcessor(update *tgbotapi.Update, e *Environment, cb *CallBack
 		userTemp.CarData.CarModel = m
 		userTemp.Action = REGISTRATION_ACTION
 		e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)] = userTemp
-		msg = createModelResponse(m, userTemp.CarData.CarBrand, update, e)
+		msg = createModelForRegResponse(m, userTemp.CarData.CarBrand, update, e)
 
 	case CHOOSE_ENGINE:
 		var en Engine
@@ -53,7 +53,7 @@ func registrationProcessor(update *tgbotapi.Update, e *Environment, cb *CallBack
 		userTemp.CarData.CarEngine = en
 		userTemp.Action = REGISTRATION_ACTION
 		e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)] = userTemp
-		msg = createEngineResponse(userTemp.CarData.CarModel, userTemp.CarData.CarBrand, update, e)
+		msg = createEngineForRegResponse(userTemp.CarData.CarModel, userTemp.CarData.CarBrand, update, e)
 
 	case CHOOSE_BOLT_PATTERN:
 		var bp BoltPattern
@@ -62,7 +62,7 @@ func registrationProcessor(update *tgbotapi.Update, e *Environment, cb *CallBack
 		userTemp.CarData.BoltPattern = bp
 		userTemp.Action = REGISTRATION_ACTION
 		e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)] = userTemp
-		msg = createBoltPatternResponse(update, e)
+		msg = createBoltPatternForRegResponse(update, e)
 	case CHOOSE_CITY:
 		var region Region
 		userTemp := e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)]
@@ -83,41 +83,41 @@ func registrationProcessor(update *tgbotapi.Update, e *Environment, cb *CallBack
 }
 
 func createStartRegisterResponse(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateChoiceConcernMsg(e))
+	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateConcernMsgForReg(e))
 	concerns := e.Storage.GetConcerns()
 	msg.ReplyMarkup = CreateConcernButton(concerns)
 	return msg
 }
 
-func createChooseConcernResponse(c Concern, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateChoiceAutoBrandMsg(e))
+func createConcernForRegResponse(c Concern, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateBrandMsgForReg(e))
 	brands := e.Storage.GetBrands(c.Concern)
 	msg.ReplyMarkup = CreateAutoBrandButton(brands)
 	return msg
 }
 
-func createBrandResponse(b Brand, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateModelMsg(e))
+func createBrandForRegResponse(b Brand, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateModelMsgForReg(e))
 
 	models := e.Storage.GetModels(b.Brand)
 	msg.ReplyMarkup = CreateModelsButton(models)
 	return msg
 }
 
-func createModelResponse(m Model, b Brand, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateEngineMsg(e))
+func createModelForRegResponse(m Model, b Brand, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateEngineMsgForReg(e))
 	engines := e.Storage.GetEngines(m.Model, b.Brand)
 	msg.ReplyMarkup = CreateEnginesButton(engines)
 	return msg
 }
-func createEngineResponse(m Model, b Brand, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+func createEngineForRegResponse(m Model, b Brand, update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateBoltPatternMsg(e))
 	bps := e.Storage.GetBoltPatterns(m.Model, b.Brand)
 	msg.ReplyMarkup = CreateBoltPatternsButton(bps)
 	return msg
 }
 
-func createBoltPatternResponse(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
+func createBoltPatternForRegResponse(update *tgbotapi.Update, e *Environment) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateRegionMsg(e))
 	regions := e.Storage.GetAllRegions()
 	msg.ReplyMarkup = CreateRegionsButton(regions)

@@ -21,7 +21,8 @@ func CallbackProcessing(update *tgbotapi.Update, e *Environment) tgbotapi.Messag
 	case SALE_ACTION:
 		//saleProcessor(update, e)
 	case SEARCH_REQUEST_ACTION:
-		//searchRequestProcessor(update, e)
+		//TODO проверяем зарегистрирован ли пользователь
+		msg = searchRequestProcessor(update, e, &callback)
 	default:
 		msg = CreateErrorMsg(update, e)
 	}

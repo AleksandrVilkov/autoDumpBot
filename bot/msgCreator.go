@@ -7,24 +7,36 @@ func CreateErrAuthMsg(e *Environment) string {
 	return e.Resources.Errors.AuthError + " \nПодпишись: \n" + e.Config.ValidateData.ChannelUrl
 }
 
-func CreateChoiceConcernMsg(e *Environment) string {
-	return e.Resources.Msgs.ChoiceConcern
-}
-func CreateChoiceAutoBrandMsg(e *Environment) string {
-	return e.Resources.Msgs.CarBrandEnter
+func CreateConcernMsgForReg(e *Environment) string {
+	return e.Resources.Msgs.Registration.ChoiceConcern
 }
 
-func CreateModelMsg(e *Environment) string {
-	return e.Resources.Msgs.CarModelEnter
+func CreateBrandMsgForReg(e *Environment) string {
+	return e.Resources.Msgs.Registration.CarBrandEnter
 }
-func CreateEngineMsg(e *Environment) string {
-	return e.Resources.Msgs.CarEngineEnter
+
+func CreateModelMsgForReg(e *Environment) string {
+	return e.Resources.Msgs.Registration.CarModelEnter
+}
+func CreateEngineMsgForReg(e *Environment) string {
+	return e.Resources.Msgs.Registration.CarEngineEnter
 }
 
 func CreateBoltPatternMsg(e *Environment) string {
-	return e.Resources.Msgs.CarBoltPatternEnter
+	return e.Resources.Msgs.Registration.CarBoltPatternEnter
 }
 
 func CreateRegionMsg(e *Environment) string {
-	return e.Resources.Msgs.RegionEnter
+	return e.Resources.Msgs.Registration.RegionEnter
+}
+
+func CreateConcernMsgForSearch(e *Environment) string {
+	return e.Resources.Msgs.Search.ChoiceConcern
+}
+
+func CreateBrandMsgForSearch(e *Environment) string {
+	return e.Resources.Msgs.Search.CarBrandEnter
+}
+func CreateModelMsgForSearch(e *Environment) string {
+	return e.Resources.Msgs.Search.CarModelEnter
 }

@@ -67,16 +67,25 @@ type Resources struct {
 	}
 
 	Msgs struct {
-		WelcomeMessage      string `yaml:"welcomeMessage"`
-		Rules               string `yaml:"rules"`
-		ChoiceConcern       string `yaml:"choiceConcern"`
-		CarBrandEnter       string `yaml:"сarBrandEnter"`
-		CarModelEnter       string `yaml:"сarModelEnter"`
-		CarEngineEnter      string `yaml:"сarEngineEnter"`
-		CarBoltPatternEnter string `yaml:"carBoltPatternEnter"`
-		RegionEnter         string `yaml:"regionEnter"`
-		SuccessReservation  string `yaml:"successReservation"`
-		StartSale           string `yaml:"startSale"`
+		Registration struct {
+			ChoiceConcern       string `yaml:"choiceConcern"`
+			CarBrandEnter       string `yaml:"сarBrandEnter"`
+			CarModelEnter       string `yaml:"сarModelEnter"`
+			CarEngineEnter      string `yaml:"сarEngineEnter"`
+			CarBoltPatternEnter string `yaml:"carBoltPatternEnter"`
+			RegionEnter         string `yaml:"regionEnter"`
+			SuccessReservation  string `yaml:"successReservation"`
+		}
+		Search struct {
+			ChoiceConcern string `yaml:"choiceConcern"`
+			CarBrandEnter string `yaml:"сarBrandEnter"`
+			CarModelEnter string `yaml:"сarModelEnter"`
+		}
+
+		WelcomeMessage string `yaml:"welcomeMessage"`
+		Rules          string `yaml:"rules"`
+
+		StartSale string `yaml:"startSale"`
 	}
 	Errors struct {
 		ErrorReservation string `yaml:"errorReservation"`
@@ -134,11 +143,20 @@ type TempData struct {
 	Action           Action
 	CarData          TempCarData
 	SaleData         TempSaleData
+	SearchData       TempSearchData
 	SubscriptionData TempSubscriptionData
 	Region           Region
 }
 
 type TempCarData struct {
+	Concern     Concern
+	CarBrand    Brand
+	CarModel    Model
+	CarEngine   Engine
+	BoltPattern BoltPattern
+}
+
+type TempSearchData struct {
 	Concern     Concern
 	CarBrand    Brand
 	CarModel    Model
