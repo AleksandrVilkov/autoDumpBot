@@ -93,12 +93,14 @@ func (b *ButtonMaker) CreateAutoBrandButton(brands []model.Brand, e *bot.Environ
 
 	return bot.CreateInlineKeyBoard(data, 1)
 }
-func (b *ButtonMaker) CreateModelsButton(models []model.Model, e *bot.Environment, cb *model.CallBack) tgbotapi.InlineKeyboardMarkup {
+func (b *ButtonMaker) CreateModelsButton(models []model.Model,
+	e *bot.Environment,
+	cb *model.CallBack, subsection model.CallbackSubsection) tgbotapi.InlineKeyboardMarkup {
 
 	data := make(map[string]string)
 	for i := 0; i < len(models); i++ {
 		cb.CarData.Model = models[i].Model
-		cb.Subsection = model.CHOOSE_MODEL
+		cb.Subsection = subsection
 		token := bot.GetMD5Hash(cb.ToString())
 		if !e.TempData.SaveTempData(token, cb) {
 			log.Print("error save temp data")

@@ -23,6 +23,7 @@ type Resources struct {
 			ChoiceConcern string `yaml:"choiceConcern"`
 			CarBrandEnter string `yaml:"сarBrandEnter"`
 			CarModelEnter string `yaml:"сarModelEnter"`
+			SearchText    string `yaml:"searchText"`
 		}
 
 		WelcomeMessage    string `yaml:"welcomeMessage"`

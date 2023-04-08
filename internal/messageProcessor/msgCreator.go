@@ -48,6 +48,9 @@ func CreateBrandMsgForSearch(e *bot.Environment) string {
 func CreateModelMsgForSearch(e *bot.Environment) string {
 	return e.Resources.Msgs.Search.CarModelEnter
 }
+func CreateEnterTextMsgForSearch(e *bot.Environment) string {
+	return e.Resources.Msgs.Search.SearchText
+}
 func CreateErrorMsg(update *tgbotapi.Update, e *bot.Environment) tgbotapi.MessageConfig {
 	return tgbotapi.NewMessage(update.Message.Chat.ID, e.Resources.Errors.CommonError)
 }

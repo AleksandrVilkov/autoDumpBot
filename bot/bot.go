@@ -31,5 +31,6 @@ func StartBot(e Environment) {
 
 		_, err := bot.Send(msg)
 		CheckError(err)
+		//_, w := bot.Send(tgbotapi.NewEditMessageText(update.Message.Chat.ID, update.Message.ReplyToMessage.MessageID, "55555"))
 	}
 }

@@ -10,7 +10,7 @@ type ButtonMaker interface {
 	CreateMainButtons(e *Environment, update *tgbotapi.Update) tgbotapi.InlineKeyboardMarkup
 	CreateConcernButton(concerns []model.Concern, c *model.CallBack, e *Environment) tgbotapi.InlineKeyboardMarkup
 	CreateAutoBrandButton(brands []model.Brand, e *Environment, cb *model.CallBack) tgbotapi.InlineKeyboardMarkup
-	CreateModelsButton(models []model.Model, e *Environment, cb *model.CallBack) tgbotapi.InlineKeyboardMarkup
+	CreateModelsButton(models []model.Model, e *Environment, cb *model.CallBack, subsection model.CallbackSubsection) tgbotapi.InlineKeyboardMarkup
 	CreateEnginesButton(en []model.Engine, e *Environment, cb *model.CallBack) tgbotapi.InlineKeyboardMarkup
 	CreateBoltPatternsButton(bp []model.BoltPattern, e *Environment, cb *model.CallBack) tgbotapi.InlineKeyboardMarkup
 	CreateRegionsButton(r []model.Region, e *Environment, cb *model.CallBack) tgbotapi.InlineKeyboardMarkup

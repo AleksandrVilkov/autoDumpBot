@@ -42,6 +42,7 @@ func getCallback(e *bot.Environment, update *tgbotapi.Update) (model.CallBack, e
 		return model.CallBack{}, err
 	}
 	callback := e.TempData.FindTempDataByToken(token.Token)
+	callback.Token = token.Token
 	return *callback, nil
 }
 

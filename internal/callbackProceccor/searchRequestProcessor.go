@@ -4,75 +4,51 @@ import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 	"psa_dump_bot/bot"
 	"psa_dump_bot/internal/messageProcessor"
-	model2 "psa_dump_bot/model"
+	botModel "psa_dump_bot/model"
 )
 
-func searchRequestProcessor(update *tgbotapi.Update, e *bot.Environment, cb *model2.CallBack) tgbotapi.MessageConfig {
+func searchRequestProcessor(update *tgbotapi.Update, e *bot.Environment, cb *botModel.CallBack) tgbotapi.MessageConfig {
 	var msg tgbotapi.MessageConfig
-	//switch cb.Subsection {
-	//case "":
-	//	msg = createStartSearchRequestResponse(update, e)
-	//	key := strconv.Itoa(update.CallbackQuery.From.ID)
-	//	temp := TempData{
-	//		UserId:     strconv.Itoa(update.CallbackQuery.From.ID),
-	//		SearchData: TempSearchData{},
-	//		Action:     SEARCH_REQUEST_ACTION,
-	//	}
-	//	e.TempData[key] = temp
-	//case CHOOSE_CONCERN:
-	//	var c Concern
-	//	_ = json.Unmarshal([]byte(cb.Data), &c)
-	//	msg = createConcernForSearchResponse(c, update, e)
-	//	userTemp := e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)]
-	//	userTemp.SearchData.Concern = c
-	//	userTemp.Action = SEARCH_REQUEST_ACTION
-	//	e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)] = userTemp
-	//
-	//case CHOOSE_BRAND:
-	//	var b Brand
-	//	_ = json.Unmarshal([]byte(cb.Data), &b)
-	//	msg = createBrandForSearchResponse(b, update, e)
-	//	userTemp := e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)]
-	//	userTemp.SearchData.CarBrand = b
-	//	userTemp.Action = SEARCH_REQUEST_ACTION
-	//	e.TempData[strconv.Itoa(update.CallbackQuery.From.ID)] = userTemp
-	//}
-
+	switch cb.Subsection {
+	case "":
+		msg = createStartSearchRequestMsg(update, e, cb)
+	case botModel.CHOOSE_CONCERN:
+		msg = createConcernForSearchMsg(update, e, cb)
+		msg.ReplyToMessageID = update.CallbackQuery.Message.MessageID
+	case botModel.CHOOSE_BRAND:
+		msg = createBrandForSearchMsg(update, e, cb)
+		msg.ReplyToMessageID = update.CallbackQuery.Message.MessageID
+	case botModel.ENTER_SEARCH_TEXT:
+		msg = createEnterTextForSearchMsg(update, e, cb)
+		msg.ReplyToMessageID = update.CallbackQuery.Message.MessageID
+		msg.Text += "\nID запроса *" + cb.Token + "*"
+	}
 	return msg
 }
 
-func createStartSearchRequestResponse(update *tgbotapi.Update, e *bot.Environment) tgbotapi.MessageConfig {
+func createStartSearchRequestMsg(update *tgbotapi.Update, e *bot.Environment, cb *botModel.CallBack) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), messageProcessor.CreateConcernMsgForSearch(e))
-	//concerns := e.Storage.GetConcerns()
-	////concerns := make([]Concern, 2)
-	////concerns[0] = Concern{
-	////	Concern: "PSA",
-	////}
-	//msg.ReplyMarkup = CreateConcernButton(concerns)
+	concerns := e.Storage.GetConcerns()
+	msg.ReplyMarkup = e.ButtonMaker.CreateConcernButton(concerns, cb, e)
 	return msg
 }
 
-func createConcernForSearchResponse(c model2.Concern, update *tgbotapi.Update, e *bot.Environment) tgbotapi.MessageConfig {
+func createConcernForSearchMsg(update *tgbotapi.Update, e *bot.Environment, cb *botModel.CallBack) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), messageProcessor.CreateBrandMsgForSearch(e))
-	//brands := e.Storage.GetBrands(c.Concern)
-	//brands := make([]Brand, 2)
-	//brands[0] = Brand{
-	//	Brand: "Ситроян",
-	//}
-	//brands[1] = Brand{
-	//	Brand: "Пеугеот",
-	//}
-	//msg.ReplyMarkup = CreateAutoBrandButton(brands)
+	brands := e.Storage.GetBrands(cb.CarData.Concern)
+	msg.ReplyMarkup = e.ButtonMaker.CreateAutoBrandButton(brands, e, cb)
 	return msg
 }
 
-func createBrandForSearchResponse(b model2.Brand, update *tgbotapi.Update, e *bot.Environment) tgbotapi.MessageConfig {
+func createBrandForSearchMsg(update *tgbotapi.Update, e *bot.Environment, cb *botModel.CallBack) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), messageProcessor.CreateModelMsgForSearch(e))
-	//models := e.Storage.GetModels(b.Brand)
-	//models := make([]Model, 1)
-	//models[0] = Model{
-	//	Model: "ЦЭ4",
-	//}
-	//msg.ReplyMarkup = CreateModelsButton(models)
+	models := e.Storage.GetModels(cb.CarData.Brand)
+	msg.ReplyMarkup = e.ButtonMaker.CreateModelsButton(models, e, cb, botModel.ENTER_SEARCH_TEXT)
+	return msg
+}
+
+func createEnterTextForSearchMsg(update *tgbotapi.Update, e *bot.Environment, cb *botModel.CallBack) tgbotapi.MessageConfig {
+	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), messageProcessor.CreateEnterTextMsgForSearch(e))
+
 	return msg
 }

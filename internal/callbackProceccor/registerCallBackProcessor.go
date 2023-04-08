@@ -52,7 +52,7 @@ func createConcernMsgForReg(cb *botModel.CallBack, update *tgbotapi.Update, e *b
 func createBrandMsgForReg(cb *botModel.CallBack, update *tgbotapi.Update, e *bot.Environment) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), messageProcessor.CreateModelMsgForReg(e))
 	models := e.Storage.GetModels(cb.CarData.Brand)
-	msg.ReplyMarkup = e.ButtonMaker.CreateModelsButton(models, e, cb)
+	msg.ReplyMarkup = e.ButtonMaker.CreateModelsButton(models, e, cb, botModel.CHOOSE_MODEL)
 	return msg
 }
 

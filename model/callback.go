@@ -3,6 +3,7 @@ package model
 import "encoding/json"
 
 type CallBack struct {
+	Token      string
 	UserId     string             `json:"userId"`
 	Subsection CallbackSubsection `json:"subsection"`
 	Action     Action             `json:"action"`
