@@ -4,13 +4,6 @@ import (
 	"time"
 )
 
-type Environment struct {
-	Config    *Config
-	Storage   Storage
-	Resources *Resources
-	TempData  TempStorage
-}
-
 type User struct {
 	Id         int
 	CreateDate time.Time

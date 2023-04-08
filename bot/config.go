@@ -1,4 +1,4 @@
-package model
+package bot
 
 type Config struct {
 	Token    string `yaml:"token"`

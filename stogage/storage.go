@@ -3,7 +3,7 @@ package postgreSQL
 import (
 	"encoding/json"
 	"log"
-	"psa_dump_bot/bot/model"
+	model2 "psa_dump_bot/model"
 	"strconv"
 	"time"
 )
@@ -42,7 +42,7 @@ func (s *Storage) CheckUser(login string) bool {
 	return resultSearch.Next()
 }
 
-func (s *Storage) SaveTempData(token string, c *model.CallBack) bool {
+func (s *Storage) SaveTempData(token string, c *model2.CallBack) bool {
 	query := INSERT_INTO + TEMPDATA_TABLE_NAME +
 		"(" + "token" + ", " +
 		"createdDate" + ", " +
@@ -57,7 +57,7 @@ func (s *Storage) SaveTempData(token string, c *model.CallBack) bool {
 	}
 	return true
 }
-func (s *Storage) FindTempDataByToken(token string) *model.CallBack {
+func (s *Storage) FindTempDataByToken(token string) *model2.CallBack {
 	query := SELECT + "callback " + FROM + TEMPDATA_TABLE_NAME + WHERE + "token = '" + token + "'"
 	resultSearch := s.psql.GetRows(query)
 
@@ -66,30 +66,30 @@ func (s *Storage) FindTempDataByToken(token string) *model.CallBack {
 	for resultSearch.Next() {
 		if count != 0 {
 			log.Println("More than one callback found for the same token")
-			return &model.CallBack{}
+			return &model2.CallBack{}
 		}
 		err := resultSearch.Scan(&stringCallback)
 		if err != nil {
 			log.Println(err)
 
-			return &model.CallBack{}
+			return &model2.CallBack{}
 		}
 		count++
 	}
-	var result model.CallBack
+	var result model2.CallBack
 	err := json.Unmarshal([]byte(stringCallback), &result)
 	if err != nil {
 		log.Println(err)
-		return &model.CallBack{}
+		return &model2.CallBack{}
 	}
 
 	return &result
 }
-func (s *Storage) GetConcerns() []model.Concern {
+func (s *Storage) GetConcerns() []model2.Concern {
 	query := SELECT + DISTINCT + "concern " + FROM + CAR_TABLE_NAME
 	resultSearch := s.psql.GetRows(query)
 
-	var result []model.Concern
+	var result []model2.Concern
 	for resultSearch.Next() {
 		var concern string
 		err := resultSearch.Scan(&concern)
@@ -99,15 +99,15 @@ func (s *Storage) GetConcerns() []model.Concern {
 			return result
 		}
 
-		result = append(result, model.Concern{Concern: concern})
+		result = append(result, model2.Concern{Concern: concern})
 	}
 	return result
 }
-func (s *Storage) GetBrands(concern string) []model.Brand {
+func (s *Storage) GetBrands(concern string) []model2.Brand {
 	query := SELECT + DISTINCT + "brand " + FROM + CAR_TABLE_NAME + WHERE + "concern = '" + concern + "'"
 	resultSearch := s.psql.GetRows(query)
 
-	var result []model.Brand
+	var result []model2.Brand
 
 	for resultSearch.Next() {
 		var brand string
@@ -117,16 +117,16 @@ func (s *Storage) GetBrands(concern string) []model.Brand {
 			log.Println("Error scan brand in func GetBrands()")
 			return result
 		}
-		result = append(result, model.Brand{Brand: brand})
+		result = append(result, model2.Brand{Brand: brand})
 	}
 	return result
 }
 
-func (s *Storage) GetModels(brand string) []model.Model {
+func (s *Storage) GetModels(brand string) []model2.Model {
 	query := SELECT + DISTINCT + "model " + FROM + CAR_TABLE_NAME + WHERE + "brand = '" + brand + "'"
 	resultSearch := s.psql.GetRows(query)
 
-	var result []model.Model
+	var result []model2.Model
 	for resultSearch.Next() {
 		var modelName string
 		err := resultSearch.Scan(&modelName)
@@ -135,17 +135,17 @@ func (s *Storage) GetModels(brand string) []model.Model {
 			return result
 		}
 
-		result = append(result, model.Model{Model: modelName})
+		result = append(result, model2.Model{Model: modelName})
 	}
 
 	return result
 }
-func (s *Storage) GetEngines(carModel string, brand string) []model.Engine {
+func (s *Storage) GetEngines(carModel string, brand string) []model2.Engine {
 	query := SELECT + DISTINCT + "engine " + FROM + CAR_TABLE_NAME + WHERE + "model ='" + carModel + "' " + AND + "brand ='" +
 		brand + "'"
 
 	resultSearch := s.psql.GetRows(query)
-	var result []model.Engine
+	var result []model2.Engine
 
 	for resultSearch.Next() {
 		var engineName string
@@ -154,16 +154,16 @@ func (s *Storage) GetEngines(carModel string, brand string) []model.Engine {
 			log.Println("Error scan engine in func GetEngines()")
 			return result
 		}
-		result = append(result, model.Engine{EngineName: engineName})
+		result = append(result, model2.Engine{EngineName: engineName})
 	}
 	return result
 }
-func (s *Storage) GetBoltPatterns(carModel string, brand string) []model.BoltPattern {
+func (s *Storage) GetBoltPatterns(carModel string, brand string) []model2.BoltPattern {
 	query := SELECT + DISTINCT + "boltPattern " + FROM + CAR_TABLE_NAME + WHERE + "model ='" + carModel + "' " + AND + "brand ='" +
 		brand + "'"
 
 	resultSearch := s.psql.GetRows(query)
-	var result []model.BoltPattern
+	var result []model2.BoltPattern
 
 	for resultSearch.Next() {
 		var size string
@@ -172,13 +172,13 @@ func (s *Storage) GetBoltPatterns(carModel string, brand string) []model.BoltPat
 			log.Println("Error scan boltPattern in func GetBoltPatterns()")
 			return result
 		}
-		result = append(result, model.BoltPattern{
+		result = append(result, model2.BoltPattern{
 			BoltPatternSize: size,
 		})
 	}
 	return result
 }
-func (s *Storage) SaveUser(u *model.User) bool {
+func (s *Storage) SaveUser(u *model2.User) bool {
 	carID := s.findCarId(u.UserCar.Concern, u.UserCar.Brand, u.UserCar.Model, u.UserCar.Engine)
 	if carID == 0 {
 		log.Println("failed to get car id from input")
@@ -204,10 +204,10 @@ func (s *Storage) SaveUser(u *model.User) bool {
 	return true
 }
 
-func (s *Storage) GetAllRegions() []model.Region {
+func (s *Storage) GetAllRegions() []model2.Region {
 	query := SELECT + "*" + FROM + REGION_TABLE_NAME
 	resultSearch := s.psql.GetRows(query)
-	var result []model.Region
+	var result []model2.Region
 	for resultSearch.Next() {
 		var id int
 		var name string
@@ -216,14 +216,14 @@ func (s *Storage) GetAllRegions() []model.Region {
 			log.Println("Error scan regions in func GetAllRegions()")
 			return result
 		}
-		result = append(result, model.Region{
+		result = append(result, model2.Region{
 			Id:         id,
 			RegionName: name,
 		})
 	}
 	return result
 }
-func (s *Storage) findCarId(concern model.Concern, brand model.Brand, model model.Model, engine model.Engine) int {
+func (s *Storage) findCarId(concern model2.Concern, brand model2.Brand, model model2.Model, engine model2.Engine) int {
 	//TODO подумать как сделать лучше
 
 	query := SELECT + "*" + FROM + CAR_TABLE_NAME + WHERE + "model ='" + model.Model + "'" + AND + "concern ='" + concern.Concern + "' " + AND + "brand ='" + brand.Brand + "' " + AND +

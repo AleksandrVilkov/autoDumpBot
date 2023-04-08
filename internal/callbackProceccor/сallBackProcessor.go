@@ -1,17 +1,25 @@
-package bot
+package callbackProceccor
 
 import (
 	"encoding/json"
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
-	"psa_dump_bot/bot/model"
+	"psa_dump_bot/bot"
+	"psa_dump_bot/model"
 )
 
-func CallbackProcessing(update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
+type CallBackProcessor struct {
+}
+
+func NewCallBackProcessor() *CallBackProcessor {
+	return &CallBackProcessor{}
+}
+
+func (c *CallBackProcessor) StartCallBackProcessor(update *tgbotapi.Update, e *bot.Environment) tgbotapi.MessageConfig {
 	var msg tgbotapi.MessageConfig
 	callback, err := getCallback(e, update)
 
 	if err != nil {
-		return CreateErrorMsg(update, e)
+		return e.MessageProcessor.CreateError(update, e)
 	}
 
 	switch callback.Action {
@@ -23,13 +31,12 @@ func CallbackProcessing(update *tgbotapi.Update, e *model.Environment) tgbotapi.
 		//TODO проверяем зарегистрирован ли пользователь
 		msg = searchRequestProcessor(update, e, &callback)
 	default:
-		msg = CreateErrorMsg(update, e)
+		msg = e.MessageProcessor.CreateError(update, e)
 	}
-
 	return msg
 }
 
-func getCallback(e *model.Environment, update *tgbotapi.Update) (model.CallBack, error) {
+func getCallback(e *bot.Environment, update *tgbotapi.Update) (model.CallBack, error) {
 	token, err := getToken(update.CallbackQuery.Data)
 	if err != nil {
 		return model.CallBack{}, err

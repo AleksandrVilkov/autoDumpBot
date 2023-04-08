@@ -1,11 +1,13 @@
-package bot
+package callbackProceccor
 
 import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
-	"psa_dump_bot/bot/model"
+	"psa_dump_bot/bot"
+	"psa_dump_bot/internal/messageProcessor"
+	model2 "psa_dump_bot/model"
 )
 
-func searchRequestProcessor(update *tgbotapi.Update, e *model.Environment, cb *model.CallBack) tgbotapi.MessageConfig {
+func searchRequestProcessor(update *tgbotapi.Update, e *bot.Environment, cb *model2.CallBack) tgbotapi.MessageConfig {
 	var msg tgbotapi.MessageConfig
 	//switch cb.Subsection {
 	//case "":
@@ -39,8 +41,8 @@ func searchRequestProcessor(update *tgbotapi.Update, e *model.Environment, cb *m
 	return msg
 }
 
-func createStartSearchRequestResponse(update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateConcernMsgForSearch(e))
+func createStartSearchRequestResponse(update *tgbotapi.Update, e *bot.Environment) tgbotapi.MessageConfig {
+	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), messageProcessor.CreateConcernMsgForSearch(e))
 	//concerns := e.Storage.GetConcerns()
 	////concerns := make([]Concern, 2)
 	////concerns[0] = Concern{
@@ -50,8 +52,8 @@ func createStartSearchRequestResponse(update *tgbotapi.Update, e *model.Environm
 	return msg
 }
 
-func createConcernForSearchResponse(c model.Concern, update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateBrandMsgForSearch(e))
+func createConcernForSearchResponse(c model2.Concern, update *tgbotapi.Update, e *bot.Environment) tgbotapi.MessageConfig {
+	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), messageProcessor.CreateBrandMsgForSearch(e))
 	//brands := e.Storage.GetBrands(c.Concern)
 	//brands := make([]Brand, 2)
 	//brands[0] = Brand{
@@ -64,8 +66,8 @@ func createConcernForSearchResponse(c model.Concern, update *tgbotapi.Update, e 
 	return msg
 }
 
-func createBrandForSearchResponse(b model.Brand, update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), CreateModelMsgForSearch(e))
+func createBrandForSearchResponse(b model2.Brand, update *tgbotapi.Update, e *bot.Environment) tgbotapi.MessageConfig {
+	msg := tgbotapi.NewMessage(int64(update.CallbackQuery.From.ID), messageProcessor.CreateModelMsgForSearch(e))
 	//models := e.Storage.GetModels(b.Brand)
 	//models := make([]Model, 1)
 	//models[0] = Model{

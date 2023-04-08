@@ -5,7 +5,9 @@ import (
 	"log"
 	"os"
 	"psa_dump_bot/bot"
-	"psa_dump_bot/bot/model"
+	"psa_dump_bot/internal/buttonMaker"
+	"psa_dump_bot/internal/callbackProceccor"
+	"psa_dump_bot/internal/messageProcessor"
 	postgreSQL "psa_dump_bot/stogage"
 )
 
@@ -20,24 +22,27 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var conf model.Config
+	var conf bot.Config
 	err = yaml.Unmarshal(paramsFile, &conf)
 
-	e := model.Environment{
-		Config:    &conf,
-		Storage:   postgreSQL.NewStorage(),
-		Resources: getResources(),
-		TempData:  postgreSQL.NewStorage(),
+	e := bot.Environment{
+		Config:            &conf,
+		Storage:           postgreSQL.NewStorage(),
+		Resources:         getResources(),
+		TempData:          postgreSQL.NewStorage(),
+		CallBackProcessor: callbackProceccor.NewCallBackProcessor(),
+		MessageProcessor:  messageProcessor.NewMessageProcessor(),
+		ButtonMaker:       buttonMaker.NewButtonMaker(),
 	}
-	bot.StartBot(&e)
+	bot.StartBot(e)
 }
 
-func getResources() *model.Resources {
+func getResources() *bot.Resources {
 	paramsFile, err := os.ReadFile(RES_PATH)
 	if err != nil {
 		log.Fatal(err)
 	}
-	var res model.Resources
+	var res bot.Resources
 	unmarshalErr := yaml.Unmarshal(paramsFile, &res)
 
 	if unmarshalErr != nil {

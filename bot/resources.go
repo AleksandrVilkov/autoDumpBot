@@ -1,4 +1,4 @@
-package model
+package bot
 
 type Resources struct {
 	Buttonstext struct {

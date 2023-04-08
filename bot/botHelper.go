@@ -7,7 +7,7 @@ import (
 	tgbotapi "github.com/Syfaro/telegram-bot-api"
 	"log"
 	"math"
-	"psa_dump_bot/bot/model"
+	"psa_dump_bot/model"
 )
 
 func CheckError(e error) {
@@ -32,10 +32,6 @@ func GetMD5HashFromCallBack(c *model.CallBack) string {
 	data, _ := json.Marshal(c)
 	hasher.Write(data)
 	return hex.EncodeToString(hasher.Sum(nil))
-}
-
-func CreateErrorMsg(update *tgbotapi.Update, e *model.Environment) tgbotapi.MessageConfig {
-	return tgbotapi.NewMessage(update.Message.Chat.ID, e.Resources.Errors.CommonError)
 }
 
 func CreateInlineKeyBoard(callback map[string]string, column int) tgbotapi.InlineKeyboardMarkup {

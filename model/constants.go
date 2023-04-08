@@ -29,24 +29,3 @@ const (
 	RULES          = "rules"
 	NONE           = "none"
 )
-
-type Action string
-
-const (
-	REGISTRATION_ACTION   Action = "register"
-	SALE_ACTION                  = "sale"
-	SEARCH_REQUEST_ACTION        = "searchRequest"
-	SUBSCRIBE_ACTION             = "subscribe"
-	RULES_ACTION                 = "rules"
-)
-
-type CallbackSubsection string
-
-const (
-	CHOOSE_CONCERN      CallbackSubsection = "concern"
-	CHOOSE_BRAND                           = "brand"
-	CHOOSE_MODEL                           = "model"
-	CHOOSE_ENGINE                          = "engine"
-	CHOOSE_BOLT_PATTERN                    = "bp"
-	CHOOSE_CITY                            = "city"
-)
