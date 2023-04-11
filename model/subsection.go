@@ -9,4 +9,5 @@ const (
 	CHOOSE_ENGINE                          = "engine"
 	CHOOSE_BOLT_PATTERN                    = "bp"
 	CHOOSE_CITY                            = "city"
+	UNEVERSAL                              = "universal"
 )

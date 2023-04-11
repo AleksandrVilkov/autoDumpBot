@@ -65,6 +65,13 @@ func (b *ButtonMaker) CreateMainButtons(e *bot.Environment, update *tgbotapi.Upd
 	return bot.CreateInlineKeyBoard(data, 1)
 }
 
+func (b *ButtonMaker) CreateUniversalButton(c *model.CallBack, e *bot.Environment) {
+	data := make(map[string]string)
+	c.Subsection = model.UNEVERSAL
+	token := bot.GetMD5Hash(c.ToString())
+	data[e.Resources.Buttonstext.Universal] = b.getButtonData(token)
+}
+
 func (b *ButtonMaker) CreateConcernButton(concerns []model.Concern, c *model.CallBack, e *bot.Environment) tgbotapi.InlineKeyboardMarkup {
 	data := make(map[string]string)
 	for i := 0; i < len(concerns); i++ {
