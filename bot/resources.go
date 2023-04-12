@@ -7,6 +7,7 @@ type Resources struct {
 		SearchRequest string `yaml:"searchRequest"`
 		PlaceAnAd     string `yaml:"placeAnAd"`
 		Rules         string `yaml:"rules"`
+		Universal     string `yaml:"universal"`
 	}
 
 	Msgs struct {
